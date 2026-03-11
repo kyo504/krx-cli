@@ -27,6 +27,7 @@ export const marketSchema = z.enum(["kospi", "kosdaq", "konex", "krx"]);
 
 export type Market = z.infer<typeof marketSchema>;
 
+// eslint-disable-next-line no-control-regex
 const CONTROL_CHAR_PATTERN = /[\x00-\x1f\x7f]/;
 const PATH_TRAVERSAL_PATTERN = /\.\.[/\\]/;
 
