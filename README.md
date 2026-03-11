@@ -137,13 +137,91 @@ krx schema stock.stk_bydd_trd
 
 ## AI 에이전트 연동
 
-### Claude Code
+krx-cli는 AI 에이전트가 Bash tool로 직접 호출하도록 설계되었습니다. 연동은 2단계입니다:
 
-SKILL.md 파일을 프로젝트에 포함하면 Claude Code가 자동으로 사용법을 인식합니다.
+1. **CLI 설치** — 실제 실행 가능한 `krx` 바이너리
+2. **스킬 설치** — 에이전트에게 사용법을 알려주는 SKILL.md
+
+### Step 1: CLI 설치
 
 ```bash
-# Claude Code에서 바로 사용 가능
-krx stock list --date 20250307 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT -o json
+npm install -g krx-cli
+```
+
+### Step 2: 스킬 설치
+
+[skills.sh](https://skills.sh)를 통해 SKILL.md를 에이전트에 등록합니다.
+
+```bash
+# 모든 에이전트에 글로벌 설치 (권장)
+npx skills add kyo504/krx-cli -g
+
+# 특정 에이전트만 지정
+npx skills add kyo504/krx-cli -g -a claude-code
+npx skills add kyo504/krx-cli -g -a cursor
+
+# 프로젝트 단위 설치 (팀 공유 시)
+npx skills add kyo504/krx-cli
+```
+
+### Step 3: API 키 설정
+
+```bash
+krx auth set <your-api-key>
+# 또는
+export KRX_API_KEY=<your-api-key>
+```
+
+### 지원 에이전트
+
+skills.sh는 40개 이상의 에이전트를 지원합니다:
+
+| 에이전트 | 스킬 설치 경로 |
+|---------|--------------|
+| Claude Code | `~/.claude/skills/` |
+| Cursor | `~/.cursor/skills/` |
+| GitHub Copilot | `~/.github-copilot/skills/` |
+| Cline | `~/.cline/skills/` |
+| Windsurf | `~/.windsurf/skills/` |
+| 기타 | `~/.agents/skills/` |
+
+### 사용 예시
+
+스킬 설치 후 에이전트에게 자연어로 요청합니다:
+
+```
+"오늘 코스피 지수 보여줘"
+→ krx index list --date 20250311 --market kospi --fields IDX_NM,CLSPRC_IDX,FLUC_RT
+
+"삼성전자 주가 알려줘"
+→ krx stock list --date 20250311 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT -o json
+
+"금 시세 확인해줘"
+→ krx commodity list --date 20250311 --type gold
+
+"어떤 API가 승인되어 있어?"
+→ krx auth status
+```
+
+### 스킬 관리
+
+```bash
+npx skills list -g          # 설치된 스킬 확인
+npx skills check             # 업데이트 확인
+npx skills update            # 업데이트
+npx skills remove krx-cli    # 제거
+```
+
+### 수동 연동 (skills.sh 없이)
+
+SKILL.md를 직접 에이전트 설정 디렉토리에 복사할 수도 있습니다:
+
+```bash
+# Claude Code
+mkdir -p ~/.claude/skills && cp SKILL.md ~/.claude/skills/krx-cli.md
+
+# Cursor
+mkdir -p ~/.cursor/skills && cp SKILL.md ~/.cursor/skills/krx-cli.md
 ```
 
 ## 개발
