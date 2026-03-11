@@ -11,8 +11,7 @@
     "SKILL.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "node esbuild.config.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -51,12 +50,12 @@
     "@eslint/js": "^10.0.1",
     "@release-it/conventional-changelog": "^10.0.5",
     "@types/node": "^25.4.0",
+    "esbuild": "^0.27.3",
     "eslint": "^10.0.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.3",
     "prettier": "^3.8.1",
     "release-it": "^19.2.4",
-    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.0.18"
