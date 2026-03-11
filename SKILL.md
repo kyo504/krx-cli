@@ -157,17 +157,125 @@ krx auth status -o json
 krx stock list --date 20250307 --market kospi --dry-run
 ```
 
-## Key Response Fields
+## Response Fields
 
-### Stock / Index common fields
-- `BAS_DD` - Date (YYYYMMDD)
-- `ISU_NM` / `IDX_NM` - Name
-- `TDD_CLSPRC` / `CLSPRC_IDX` - Closing price
-- `CMPPREVDD_PRC` / `CMPPREVDD_IDX` - Change from previous day
-- `FLUC_RT` - Change rate (%)
-- `TDD_OPNPRC` / `OPNPRC_IDX` - Opening price
-- `TDD_HGPRC` / `HGPRC_IDX` - High price
-- `TDD_LWPRC` / `LWPRC_IDX` - Low price
-- `ACC_TRDVOL` - Trading volume
-- `ACC_TRDVAL` - Trading value
-- `MKTCAP` - Market capitalization
+Use `krx schema <command>` to get full field definitions for any endpoint. All values are strings.
+
+### Index (kospi/kosdaq/krx)
+
+| Field         | Description         |
+| ------------- | ------------------- |
+| BAS_DD        | 기준일자 (YYYYMMDD) |
+| IDX_CLSS      | 계열구분            |
+| IDX_NM        | 지수명              |
+| CLSPRC_IDX    | 종가                |
+| CMPPREVDD_IDX | 전일대비            |
+| FLUC_RT       | 등락률(%)           |
+| OPNPRC_IDX    | 시가                |
+| HGPRC_IDX     | 고가                |
+| LWPRC_IDX     | 저가                |
+| ACC_TRDVOL    | 거래량              |
+| ACC_TRDVAL    | 거래대금            |
+| MKTCAP        | 상장시가총액        |
+
+### Stock (kospi/kosdaq/konex)
+
+| Field         | Description         |
+| ------------- | ------------------- |
+| BAS_DD        | 기준일자 (YYYYMMDD) |
+| ISU_CD        | 종목코드            |
+| ISU_NM        | 종목명              |
+| MKT_NM        | 시장구분            |
+| SECT_TP_NM    | 소속부              |
+| TDD_CLSPRC    | 종가                |
+| CMPPREVDD_PRC | 전일대비            |
+| FLUC_RT       | 등락률(%)           |
+| TDD_OPNPRC    | 시가                |
+| TDD_HGPRC     | 고가                |
+| TDD_LWPRC     | 저가                |
+| ACC_TRDVOL    | 거래량              |
+| ACC_TRDVAL    | 거래대금            |
+| MKTCAP        | 시가총액            |
+| LIST_SHRS     | 상장주식수          |
+
+### ETF
+
+| Field          | Description     |
+| -------------- | --------------- |
+| ISU_CD         | 종목코드        |
+| ISU_NM         | 종목명          |
+| TDD_CLSPRC     | 종가            |
+| FLUC_RT        | 등락률(%)       |
+| NAV            | 순자산가치(NAV) |
+| ACC_TRDVOL     | 거래량          |
+| MKTCAP         | 시가총액        |
+| IDX_IND_NM     | 기초지수명      |
+| OBJ_STKPRC_IDX | 기초지수종가    |
+
+### Futures
+
+| Field          | Description    |
+| -------------- | -------------- |
+| PROD_NM        | 상품명         |
+| ISU_NM         | 종목명         |
+| TDD_CLSPRC     | 종가           |
+| SPOT_PRC       | 현물가         |
+| SETL_PRC       | 정산가         |
+| ACC_OPNINT_QTY | 미결제약정수량 |
+
+### Options
+
+| Field          | Description      |
+| -------------- | ---------------- |
+| PROD_NM        | 상품명           |
+| RGHT_TP_NM     | 권리유형 (콜/풋) |
+| ISU_NM         | 종목명           |
+| TDD_CLSPRC     | 종가             |
+| IMP_VOLT       | 내재변동성       |
+| ACC_OPNINT_QTY | 미결제약정수량   |
+
+### Bond
+
+| Field      | Description |
+| ---------- | ----------- |
+| ISU_NM     | 종목명      |
+| CLSPRC     | 종가        |
+| CLSPRC_YD  | 종가수익률  |
+| ACC_TRDVOL | 거래량      |
+| ACC_TRDVAL | 거래대금    |
+
+### Commodity (gold/emission)
+
+| Field      | Description |
+| ---------- | ----------- |
+| ISU_NM     | 종목명      |
+| TDD_CLSPRC | 종가        |
+| FLUC_RT    | 등락률(%)   |
+| ACC_TRDVOL | 거래량      |
+
+### Commodity (oil)
+
+| Field      | Description  |
+| ---------- | ------------ |
+| OIL_NM     | 유종명       |
+| WT_AVG_PRC | 가중평균가격 |
+| ACC_TRDVOL | 거래량       |
+
+### ESG Index
+
+| Field       | Description |
+| ----------- | ----------- |
+| IDX_NM      | 지수명      |
+| CLSPRC_IDX  | 종가        |
+| PRV_DD_CMPR | 전일대비    |
+| UPDN_RATE   | 등락률(%)   |
+
+### Schema Introspection
+
+For full response field definitions including all fields per endpoint:
+
+```bash
+krx schema index.kospi_dd_trd    # Shows params + responseFields
+krx schema stock.stk_bydd_trd   # Stock endpoint fields
+krx schema --all                  # All 31 endpoints
+```

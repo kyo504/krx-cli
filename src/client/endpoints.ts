@@ -1,8 +1,13 @@
+import { RESPONSE_FIELDS, type ResponseFieldDef } from "./response-fields.js";
+
+export type { ResponseFieldDef };
+
 export interface EndpointDef {
   readonly path: string;
   readonly description: string;
   readonly descriptionKo: string;
   readonly category: CategoryId;
+  readonly responseFields: readonly ResponseFieldDef[];
 }
 
 export type CategoryId =
@@ -74,207 +79,212 @@ export const CATEGORIES: readonly CategoryDef[] = [
   },
 ] as const;
 
+function ep(
+  path: string,
+  description: string,
+  descriptionKo: string,
+  category: CategoryId,
+): EndpointDef {
+  return {
+    path,
+    description,
+    descriptionKo,
+    category,
+    responseFields: RESPONSE_FIELDS[path] ?? [],
+  };
+}
+
 export const ENDPOINTS: readonly EndpointDef[] = [
   // Index (idx)
-  {
-    path: "/svc/apis/idx/krx_dd_trd",
-    description: "KRX series index daily trading",
-    descriptionKo: "KRX 시리즈 지수 일별시세",
-    category: "index",
-  },
-  {
-    path: "/svc/apis/idx/kospi_dd_trd",
-    description: "KOSPI series index daily trading",
-    descriptionKo: "KOSPI 시리즈 지수 일별시세",
-    category: "index",
-  },
-  {
-    path: "/svc/apis/idx/kosdaq_dd_trd",
-    description: "KOSDAQ series index daily trading",
-    descriptionKo: "KOSDAQ 시리즈 지수 일별시세",
-    category: "index",
-  },
-  {
-    path: "/svc/apis/idx/bon_dd_trd",
-    description: "Bond index daily trading",
-    descriptionKo: "채권지수 일별시세",
-    category: "index",
-  },
-  {
-    path: "/svc/apis/idx/drvprod_dd_trd",
-    description: "Derivatives index daily trading",
-    descriptionKo: "파생상품지수 일별시세",
-    category: "index",
-  },
+  ep(
+    "/svc/apis/idx/krx_dd_trd",
+    "KRX series index daily trading",
+    "KRX 시리즈 지수 일별시세",
+    "index",
+  ),
+  ep(
+    "/svc/apis/idx/kospi_dd_trd",
+    "KOSPI series index daily trading",
+    "KOSPI 시리즈 지수 일별시세",
+    "index",
+  ),
+  ep(
+    "/svc/apis/idx/kosdaq_dd_trd",
+    "KOSDAQ series index daily trading",
+    "KOSDAQ 시리즈 지수 일별시세",
+    "index",
+  ),
+  ep(
+    "/svc/apis/idx/bon_dd_trd",
+    "Bond index daily trading",
+    "채권지수 일별시세",
+    "index",
+  ),
+  ep(
+    "/svc/apis/idx/drvprod_dd_trd",
+    "Derivatives index daily trading",
+    "파생상품지수 일별시세",
+    "index",
+  ),
 
   // Stock (sto)
-  {
-    path: "/svc/apis/sto/stk_bydd_trd",
-    description: "KOSPI stock daily trading",
-    descriptionKo: "유가증권(KOSPI) 주식 일별매매정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/ksq_bydd_trd",
-    description: "KOSDAQ stock daily trading",
-    descriptionKo: "코스닥(KOSDAQ) 주식 일별매매정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/knx_bydd_trd",
-    description: "KONEX stock daily trading",
-    descriptionKo: "코넥스(KONEX) 주식 일별매매정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/sw_bydd_trd",
-    description: "Subscription warrant daily trading",
-    descriptionKo: "신주인수권증권 일별매매정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/sr_bydd_trd",
-    description: "Subscription right daily trading",
-    descriptionKo: "신주인수권증서 일별매매정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/stk_isu_base_info",
-    description: "KOSPI stock base info",
-    descriptionKo: "유가증권 종목 기본정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/ksq_isu_base_info",
-    description: "KOSDAQ stock base info",
-    descriptionKo: "코스닥 종목 기본정보",
-    category: "stock",
-  },
-  {
-    path: "/svc/apis/sto/knx_isu_base_info",
-    description: "KONEX stock base info",
-    descriptionKo: "코넥스 종목 기본정보",
-    category: "stock",
-  },
+  ep(
+    "/svc/apis/sto/stk_bydd_trd",
+    "KOSPI stock daily trading",
+    "유가증권(KOSPI) 주식 일별매매정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/ksq_bydd_trd",
+    "KOSDAQ stock daily trading",
+    "코스닥(KOSDAQ) 주식 일별매매정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/knx_bydd_trd",
+    "KONEX stock daily trading",
+    "코넥스(KONEX) 주식 일별매매정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/sw_bydd_trd",
+    "Subscription warrant daily trading",
+    "신주인수권증권 일별매매정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/sr_bydd_trd",
+    "Subscription right daily trading",
+    "신주인수권증서 일별매매정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/stk_isu_base_info",
+    "KOSPI stock base info",
+    "유가증권 종목 기본정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/ksq_isu_base_info",
+    "KOSDAQ stock base info",
+    "코스닥 종목 기본정보",
+    "stock",
+  ),
+  ep(
+    "/svc/apis/sto/knx_isu_base_info",
+    "KONEX stock base info",
+    "코넥스 종목 기본정보",
+    "stock",
+  ),
 
   // ETP
-  {
-    path: "/svc/apis/etp/etf_bydd_trd",
-    description: "ETF daily trading",
-    descriptionKo: "ETF 일별매매정보",
-    category: "etp",
-  },
-  {
-    path: "/svc/apis/etp/etn_bydd_trd",
-    description: "ETN daily trading",
-    descriptionKo: "ETN 일별매매정보",
-    category: "etp",
-  },
-  {
-    path: "/svc/apis/etp/elw_bydd_trd",
-    description: "ELW daily trading",
-    descriptionKo: "ELW 일별매매정보",
-    category: "etp",
-  },
+  ep(
+    "/svc/apis/etp/etf_bydd_trd",
+    "ETF daily trading",
+    "ETF 일별매매정보",
+    "etp",
+  ),
+  ep(
+    "/svc/apis/etp/etn_bydd_trd",
+    "ETN daily trading",
+    "ETN 일별매매정보",
+    "etp",
+  ),
+  ep(
+    "/svc/apis/etp/elw_bydd_trd",
+    "ELW daily trading",
+    "ELW 일별매매정보",
+    "etp",
+  ),
 
   // Bond (bon)
-  {
-    path: "/svc/apis/bon/kts_bydd_trd",
-    description: "KTS government bond daily trading",
-    descriptionKo: "국채전문유통시장 일별매매정보",
-    category: "bond",
-  },
-  {
-    path: "/svc/apis/bon/bnd_bydd_trd",
-    description: "General bond daily trading",
-    descriptionKo: "일반채권시장 일별매매정보",
-    category: "bond",
-  },
-  {
-    path: "/svc/apis/bon/smb_bydd_trd",
-    description: "Small bond daily trading",
-    descriptionKo: "소액채권시장 일별매매정보",
-    category: "bond",
-  },
+  ep(
+    "/svc/apis/bon/kts_bydd_trd",
+    "KTS government bond daily trading",
+    "국채전문유통시장 일별매매정보",
+    "bond",
+  ),
+  ep(
+    "/svc/apis/bon/bnd_bydd_trd",
+    "General bond daily trading",
+    "일반채권시장 일별매매정보",
+    "bond",
+  ),
+  ep(
+    "/svc/apis/bon/smb_bydd_trd",
+    "Small bond daily trading",
+    "소액채권시장 일별매매정보",
+    "bond",
+  ),
 
   // Derivatives (drv)
-  {
-    path: "/svc/apis/drv/fut_bydd_trd",
-    description: "Futures daily trading",
-    descriptionKo: "선물 일별매매정보",
-    category: "derivative",
-  },
-  {
-    path: "/svc/apis/drv/eqsfu_stk_bydd_trd",
-    description: "KOSPI stock futures daily trading",
-    descriptionKo: "유가증권 주식선물 일별매매정보",
-    category: "derivative",
-  },
-  {
-    path: "/svc/apis/drv/eqkfu_ksq_bydd_trd",
-    description: "KOSDAQ stock futures daily trading",
-    descriptionKo: "코스닥 주식선물 일별매매정보",
-    category: "derivative",
-  },
-  {
-    path: "/svc/apis/drv/opt_bydd_trd",
-    description: "Options daily trading",
-    descriptionKo: "옵션 일별매매정보",
-    category: "derivative",
-  },
-  {
-    path: "/svc/apis/drv/eqsop_bydd_trd",
-    description: "KOSPI stock options daily trading",
-    descriptionKo: "유가증권 주식옵션 일별매매정보",
-    category: "derivative",
-  },
-  {
-    path: "/svc/apis/drv/eqkop_bydd_trd",
-    description: "KOSDAQ stock options daily trading",
-    descriptionKo: "코스닥 주식옵션 일별매매정보",
-    category: "derivative",
-  },
+  ep(
+    "/svc/apis/drv/fut_bydd_trd",
+    "Futures daily trading",
+    "선물 일별매매정보",
+    "derivative",
+  ),
+  ep(
+    "/svc/apis/drv/eqsfu_stk_bydd_trd",
+    "KOSPI stock futures daily trading",
+    "유가증권 주식선물 일별매매정보",
+    "derivative",
+  ),
+  ep(
+    "/svc/apis/drv/eqkfu_ksq_bydd_trd",
+    "KOSDAQ stock futures daily trading",
+    "코스닥 주식선물 일별매매정보",
+    "derivative",
+  ),
+  ep(
+    "/svc/apis/drv/opt_bydd_trd",
+    "Options daily trading",
+    "옵션 일별매매정보",
+    "derivative",
+  ),
+  ep(
+    "/svc/apis/drv/eqsop_bydd_trd",
+    "KOSPI stock options daily trading",
+    "유가증권 주식옵션 일별매매정보",
+    "derivative",
+  ),
+  ep(
+    "/svc/apis/drv/eqkop_bydd_trd",
+    "KOSDAQ stock options daily trading",
+    "코스닥 주식옵션 일별매매정보",
+    "derivative",
+  ),
 
   // Commodities (gen)
-  {
-    path: "/svc/apis/gen/oil_bydd_trd",
-    description: "Oil market daily trading",
-    descriptionKo: "석유시장 일별매매정보",
-    category: "commodity",
-  },
-  {
-    path: "/svc/apis/gen/gold_bydd_trd",
-    description: "Gold market daily trading",
-    descriptionKo: "금시장 일별매매정보",
-    category: "commodity",
-  },
-  {
-    path: "/svc/apis/gen/ets_bydd_trd",
-    description: "Emission trading daily",
-    descriptionKo: "배출권시장 일별매매정보",
-    category: "commodity",
-  },
+  ep(
+    "/svc/apis/gen/oil_bydd_trd",
+    "Oil market daily trading",
+    "석유시장 일별매매정보",
+    "commodity",
+  ),
+  ep(
+    "/svc/apis/gen/gold_bydd_trd",
+    "Gold market daily trading",
+    "금시장 일별매매정보",
+    "commodity",
+  ),
+  ep(
+    "/svc/apis/gen/ets_bydd_trd",
+    "Emission trading daily",
+    "배출권시장 일별매매정보",
+    "commodity",
+  ),
 
   // ESG
-  {
-    path: "/svc/apis/esg/sri_bond_info",
-    description: "SRI bond info",
-    descriptionKo: "사회책임투자채권 종목정보",
-    category: "esg",
-  },
-  {
-    path: "/svc/apis/esg/esg_etp_info",
-    description: "ESG ETP info",
-    descriptionKo: "ESG 증권상품 정보",
-    category: "esg",
-  },
-  {
-    path: "/svc/apis/esg/esg_index_info",
-    description: "ESG index info",
-    descriptionKo: "ESG 지수 정보",
-    category: "esg",
-  },
-] as const;
+  ep(
+    "/svc/apis/esg/sri_bond_info",
+    "SRI bond info",
+    "사회책임투자채권 종목정보",
+    "esg",
+  ),
+  ep("/svc/apis/esg/esg_etp_info", "ESG ETP info", "ESG 증권상품 정보", "esg"),
+  ep("/svc/apis/esg/esg_index_info", "ESG index info", "ESG 지수 정보", "esg"),
+];
 
 export function getEndpointsByCategory(
   category: CategoryId,

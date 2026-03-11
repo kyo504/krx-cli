@@ -1,5 +1,9 @@
 import { Command } from "commander";
-import { ENDPOINTS, CATEGORIES } from "../../client/endpoints.js";
+import {
+  ENDPOINTS,
+  CATEGORIES,
+  type ResponseFieldDef,
+} from "../../client/endpoints.js";
 import { writeOutput, writeError } from "../../output/formatter.js";
 import { EXIT_CODES } from "../index.js";
 
@@ -10,6 +14,7 @@ interface SchemaEntry {
   readonly descriptionKo: string;
   readonly category: string;
   readonly params: readonly ParamDef[];
+  readonly responseFields: readonly ResponseFieldDef[];
 }
 
 interface ParamDef {
@@ -38,13 +43,14 @@ function buildCommandName(endpoint: string): string {
 }
 
 function getAllSchemas(): readonly SchemaEntry[] {
-  return ENDPOINTS.map((ep) => ({
-    command: buildCommandName(ep.path),
-    endpoint: ep.path,
-    description: ep.description,
-    descriptionKo: ep.descriptionKo,
-    category: ep.category,
+  return ENDPOINTS.map((endpoint) => ({
+    command: buildCommandName(endpoint.path),
+    endpoint: endpoint.path,
+    description: endpoint.description,
+    descriptionKo: endpoint.descriptionKo,
+    category: endpoint.category,
     params: [...COMMON_PARAMS],
+    responseFields: endpoint.responseFields,
   }));
 }
 
