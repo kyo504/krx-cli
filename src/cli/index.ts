@@ -8,6 +8,8 @@ import { registerDerivativeCommand } from "./commands/derivative.js";
 import { registerCommodityCommand } from "./commands/commodity.js";
 import { registerEsgCommand } from "./commands/esg.js";
 import { registerSchemaCommand } from "./commands/schema.js";
+import { registerVersionCommand, getVersion } from "./commands/version.js";
+import { registerUpdateCommand } from "./commands/update.js";
 import { writeError } from "../output/formatter.js";
 
 const EXIT_CODES = {
@@ -27,7 +29,7 @@ const program = new Command();
 program
   .name("krx")
   .description("Agent-native CLI for KRX (Korea Exchange) Open API")
-  .version("0.1.0")
+  .version(getVersion())
   .option("-o, --output <format>", "output format: json, table, ndjson")
   .option("-f, --fields <fields>", "comma-separated fields to include")
   .option("--dry-run", "show request without calling API")
@@ -42,6 +44,8 @@ registerDerivativeCommand(program);
 registerCommodityCommand(program);
 registerEsgCommand(program);
 registerSchemaCommand(program);
+registerVersionCommand(program);
+registerUpdateCommand(program);
 
 program.exitOverride();
 
