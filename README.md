@@ -60,51 +60,51 @@ krx auth status
 ### 지수 조회
 
 ```bash
-krx index list --date 20250307 --market kospi
-krx index list --date 20250307 --market kosdaq
+krx index list --date 20260310 --market kospi
+krx index list --date 20260310 --market kosdaq
 ```
 
 ### 주식 조회
 
 ```bash
-krx stock list --date 20250307 --market kospi
-krx stock list --date 20250307 --market kosdaq
+krx stock list --date 20260310 --market kospi
+krx stock list --date 20260310 --market kosdaq
 krx stock info --market kospi
 ```
 
 ### ETF/ETN/ELW 조회
 
 ```bash
-krx etp list --date 20250307 --type etf
-krx etp list --date 20250307 --type etn
+krx etp list --date 20260310 --type etf
+krx etp list --date 20260310 --type etn
 ```
 
 ### 채권 조회
 
 ```bash
-krx bond list --date 20250307 --market kts
-krx bond list --date 20250307 --market general
+krx bond list --date 20260310 --market kts
+krx bond list --date 20260310 --market general
 ```
 
 ### 파생상품 조회
 
 ```bash
-krx derivative list --date 20250307 --type futures
-krx derivative list --date 20250307 --type options
+krx derivative list --date 20260310 --type futures
+krx derivative list --date 20260310 --type options
 ```
 
 ### 일반상품 조회
 
 ```bash
-krx commodity list --date 20250307 --type gold
-krx commodity list --date 20250307 --type oil
+krx commodity list --date 20260310 --type gold
+krx commodity list --date 20260310 --type oil
 ```
 
 ### ESG 조회
 
 ```bash
-krx esg list --date 20250307 --type index
-krx esg list --date 20250307 --type sri-bond
+krx esg list --date 20260310 --type index
+krx esg list --date 20260310 --type sri-bond
 ```
 
 ### 스키마 조회
@@ -116,24 +116,24 @@ krx schema stock.stk_bydd_trd
 
 ## 글로벌 옵션
 
-| 옵션 | 설명 | 기본값 |
-|------|------|--------|
+| 옵션                    | 설명                           | 기본값                         |
+| ----------------------- | ------------------------------ | ------------------------------ |
 | `-o, --output <format>` | 출력 형식: json, table, ndjson | json (파이프) / table (터미널) |
-| `-f, --fields <fields>` | 출력 필드 필터 (쉼표 구분) | 전체 |
-| `--dry-run` | API 호출 없이 요청 내용 출력 | - |
-| `-v, --verbose` | 상세 로그 (stderr) | - |
+| `-f, --fields <fields>` | 출력 필드 필터 (쉼표 구분)     | 전체                           |
+| `--dry-run`             | API 호출 없이 요청 내용 출력   | -                              |
+| `-v, --verbose`         | 상세 로그 (stderr)             | -                              |
 
 ## Exit Codes
 
-| 코드 | 의미 |
-|------|------|
-| 0 | 성공 |
-| 1 | 일반 오류 |
-| 2 | 사용법 오류 (잘못된 인자) |
-| 3 | 데이터 없음 |
-| 4 | 인증 실패 |
-| 5 | Rate limit 초과 (일 10,000건) |
-| 6 | 서비스 미승인 |
+| 코드 | 의미                          |
+| ---- | ----------------------------- |
+| 0    | 성공                          |
+| 1    | 일반 오류                     |
+| 2    | 사용법 오류 (잘못된 인자)     |
+| 3    | 데이터 없음                   |
+| 4    | 인증 실패                     |
+| 5    | Rate limit 초과 (일 10,000건) |
+| 6    | 서비스 미승인                 |
 
 ## AI 에이전트 연동
 
@@ -176,14 +176,14 @@ export KRX_API_KEY=<your-api-key>
 
 skills.sh는 40개 이상의 에이전트를 지원합니다:
 
-| 에이전트 | 스킬 설치 경로 |
-|---------|--------------|
-| Claude Code | `~/.claude/skills/` |
-| Cursor | `~/.cursor/skills/` |
+| 에이전트       | 스킬 설치 경로              |
+| -------------- | --------------------------- |
+| Claude Code    | `~/.claude/skills/`         |
+| Cursor         | `~/.cursor/skills/`         |
 | GitHub Copilot | `~/.github-copilot/skills/` |
-| Cline | `~/.cline/skills/` |
-| Windsurf | `~/.windsurf/skills/` |
-| 기타 | `~/.agents/skills/` |
+| Cline          | `~/.cline/skills/`          |
+| Windsurf       | `~/.windsurf/skills/`       |
+| 기타           | `~/.agents/skills/`         |
 
 ### 사용 예시
 

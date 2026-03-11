@@ -6,7 +6,7 @@ required_env:
 install: npm install -g krx-cli
 binary: krx
 invariants:
-  - Always use YYYYMMDD format for --date (e.g., 20250307)
+  - Always use YYYYMMDD format for --date (e.g., 20260310)
   - Data is T-1 (previous trading day), available from 2010 onwards
   - Default output is JSON to stdout, errors go to stderr
   - Rate limit is 10,000 API calls per day
@@ -44,63 +44,63 @@ krx auth check <category>     # Check specific category: index, stock, etp, bond
 ### Index (지수)
 
 ```bash
-krx index list --date 20250307 --market kospi     # KOSPI index
-krx index list --date 20250307 --market kosdaq     # KOSDAQ index
-krx index list --date 20250307 --market krx        # KRX index
-krx index list --date 20250307 --market bond       # Bond index
-krx index list --date 20250307 --market derivative # Derivative index
+krx index list --date 20260310 --market kospi     # KOSPI index
+krx index list --date 20260310 --market kosdaq     # KOSDAQ index
+krx index list --date 20260310 --market krx        # KRX index
+krx index list --date 20260310 --market bond       # Bond index
+krx index list --date 20260310 --market derivative # Derivative index
 ```
 
 ### Stock (주식)
 
 ```bash
-krx stock list --date 20250307 --market kospi   # KOSPI stocks
-krx stock list --date 20250307 --market kosdaq   # KOSDAQ stocks
-krx stock list --date 20250307 --market konex    # KONEX stocks
+krx stock list --date 20260310 --market kospi   # KOSPI stocks
+krx stock list --date 20260310 --market kosdaq   # KOSDAQ stocks
+krx stock list --date 20260310 --market konex    # KONEX stocks
 krx stock info --market kospi                     # Stock base info
 ```
 
 ### ETP (ETF/ETN/ELW)
 
 ```bash
-krx etp list --date 20250307 --type etf   # ETF
-krx etp list --date 20250307 --type etn   # ETN
-krx etp list --date 20250307 --type elw   # ELW
+krx etp list --date 20260310 --type etf   # ETF
+krx etp list --date 20260310 --type etn   # ETN
+krx etp list --date 20260310 --type elw   # ELW
 ```
 
 ### Bond (채권)
 
 ```bash
-krx bond list --date 20250307 --market kts       # Government bonds
-krx bond list --date 20250307 --market general    # General bonds
-krx bond list --date 20250307 --market small      # Small bonds
+krx bond list --date 20260310 --market kts       # Government bonds
+krx bond list --date 20260310 --market general    # General bonds
+krx bond list --date 20260310 --market small      # Small bonds
 ```
 
 ### Derivative (파생상품)
 
 ```bash
-krx derivative list --date 20250307 --type futures          # Futures
-krx derivative list --date 20250307 --type options           # Options
-krx derivative list --date 20250307 --type futures-kospi     # KOSPI stock futures
-krx derivative list --date 20250307 --type futures-kosdaq    # KOSDAQ stock futures
-krx derivative list --date 20250307 --type options-kospi     # KOSPI stock options
-krx derivative list --date 20250307 --type options-kosdaq    # KOSDAQ stock options
+krx derivative list --date 20260310 --type futures          # Futures
+krx derivative list --date 20260310 --type options           # Options
+krx derivative list --date 20260310 --type futures-kospi     # KOSPI stock futures
+krx derivative list --date 20260310 --type futures-kosdaq    # KOSDAQ stock futures
+krx derivative list --date 20260310 --type options-kospi     # KOSPI stock options
+krx derivative list --date 20260310 --type options-kosdaq    # KOSDAQ stock options
 ```
 
 ### Commodity (일반상품)
 
 ```bash
-krx commodity list --date 20250307 --type gold       # Gold
-krx commodity list --date 20250307 --type oil         # Oil
-krx commodity list --date 20250307 --type emission    # Emission trading
+krx commodity list --date 20260310 --type gold       # Gold
+krx commodity list --date 20260310 --type oil         # Oil
+krx commodity list --date 20260310 --type emission    # Emission trading
 ```
 
 ### ESG
 
 ```bash
-krx esg list --date 20250307 --type index       # ESG index
-krx esg list --date 20250307 --type etp          # ESG ETP
-krx esg list --date 20250307 --type sri-bond     # SRI bonds
+krx esg list --date 20260310 --type index       # ESG index
+krx esg list --date 20260310 --type etp          # ESG ETP
+krx esg list --date 20260310 --type sri-bond     # SRI bonds
 ```
 
 ### Schema (introspection)
@@ -136,13 +136,13 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 ### Get KOSPI closing price for a specific date
 
 ```bash
-krx index list --date 20250307 --market kospi --fields IDX_NM,CLSPRC_IDX,FLUC_RT
+krx index list --date 20260310 --market kospi --fields IDX_NM,CLSPRC_IDX,FLUC_RT
 ```
 
 ### Get Samsung Electronics stock price
 
 ```bash
-krx stock list --date 20250307 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT | jq '.[] | select(.ISU_NM == "삼성전자")'
+krx stock list --date 20260310 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT | jq '.[] | select(.ISU_NM == "삼성전자")'
 ```
 
 ### Check API availability before querying
@@ -154,7 +154,7 @@ krx auth status -o json
 ### Dry run to verify request
 
 ```bash
-krx stock list --date 20250307 --market kospi --dry-run
+krx stock list --date 20260310 --market kospi --dry-run
 ```
 
 ## Response Fields
