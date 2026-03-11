@@ -2,6 +2,11 @@ import { Command } from "commander";
 import { registerAuthCommand } from "./commands/auth.js";
 import { registerIndexCommand } from "./commands/index-cmd.js";
 import { registerStockCommand } from "./commands/stock.js";
+import { registerEtpCommand } from "./commands/etp.js";
+import { registerBondCommand } from "./commands/bond.js";
+import { registerDerivativeCommand } from "./commands/derivative.js";
+import { registerCommodityCommand } from "./commands/commodity.js";
+import { registerEsgCommand } from "./commands/esg.js";
 import { registerSchemaCommand } from "./commands/schema.js";
 import { writeError } from "../output/formatter.js";
 
@@ -31,6 +36,11 @@ program
 registerAuthCommand(program);
 registerIndexCommand(program);
 registerStockCommand(program);
+registerEtpCommand(program);
+registerBondCommand(program);
+registerDerivativeCommand(program);
+registerCommodityCommand(program);
+registerEsgCommand(program);
 registerSchemaCommand(program);
 
 program.exitOverride();

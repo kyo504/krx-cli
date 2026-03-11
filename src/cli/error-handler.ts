@@ -4,9 +4,11 @@ import { EXIT_CODES } from "./index.js";
 
 export function handleKrxError(result: KrxResponse): never {
   const exitCode =
-    result.errorCode === "401"
-      ? EXIT_CODES.SERVICE_NOT_APPROVED
-      : EXIT_CODES.GENERAL_ERROR;
+    result.errorCode === "RATE_LIMIT"
+      ? EXIT_CODES.RATE_LIMIT
+      : result.errorCode === "401"
+        ? EXIT_CODES.SERVICE_NOT_APPROVED
+        : EXIT_CODES.GENERAL_ERROR;
 
   writeError(result.error ?? "Unknown error");
   process.exit(exitCode);

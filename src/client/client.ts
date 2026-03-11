@@ -21,6 +21,25 @@ interface KrxErrorBody {
 export async function krxFetch<T = Record<string, string>>(
   options: KrxRequestOptions,
 ): Promise<KrxResponse<T>> {
+  const { checkRateLimit, incrementCallCount } =
+    await import("./rate-limit.js");
+  const rateStatus = checkRateLimit();
+
+  if (!rateStatus.allowed) {
+    return {
+      success: false,
+      data: [],
+      error: `Daily rate limit exceeded (${rateStatus.count}/${rateStatus.limit})`,
+      errorCode: "RATE_LIMIT",
+    };
+  }
+
+  if (rateStatus.warning) {
+    process.stderr.write(
+      `Warning: ${rateStatus.count}/${rateStatus.limit} API calls used today\n`,
+    );
+  }
+
   const url = `${BASE_URL}${options.endpoint}`;
 
   const response = await fetch(url, {
@@ -31,6 +50,8 @@ export async function krxFetch<T = Record<string, string>>(
     },
     body: JSON.stringify(options.params),
   });
+
+  incrementCallCount();
 
   if (!response.ok) {
     let errorMsg = `HTTP ${response.status}: ${response.statusText}`;
