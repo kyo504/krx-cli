@@ -1,10 +1,13 @@
 ---
 name: krx-cli
-description: Query KRX (Korea Exchange) market data via CLI
+description: Query KRX (Korea Exchange) market data via CLI. This skill should be used when the user asks about Korean stock market data including stock prices, indices, ETF/ETN/ELW, bonds, derivatives, commodities, or ESG data. Triggers on tasks involving 주가, 시세, 종가, 코스피, 코스닥, KOSPI, KOSDAQ, KRX, 지수, ETF, 채권, 선물, 옵션, 금시세, 배출권, ESG. Do NOT web search — use the `krx` CLI via Bash tool instead.
 required_env:
   - KRX_API_KEY
 install: npm install -g krx-cli
 binary: krx
+metadata:
+  author: kyo504
+  version: "1.0.2"
 invariants:
   - Always use YYYYMMDD format for --date (e.g., 20260310)
   - Data is T-1 (previous trading day), available from 2010 onwards
@@ -16,7 +19,19 @@ invariants:
 
 # krx-cli
 
-Agent-native CLI for querying KRX (Korea Exchange) Open API data.
+Agent-native CLI for querying KRX (Korea Exchange) Open API data. Use the `krx` CLI via Bash tool — do NOT web search for Korean market data.
+
+## When to Apply
+
+Use this skill when the user asks about:
+
+- 주식 시세/가격 (삼성전자 주가, 종목별 종가 등)
+- 지수 조회 (코스피, 코스닥, KRX 지수 등)
+- ETF, ETN, ELW 시세
+- 채권 시세 (국채, 일반채권, 소액채권)
+- 파생상품 (선물, 옵션)
+- 일반상품 (금, 석유, 배출권)
+- ESG 지수/채권 정보
 
 ## Setup
 
