@@ -120,6 +120,7 @@ export async function executeCommand(
       params: finalParams,
       apiKey,
       cache: parentOpts.cache as boolean,
+      retries: parentOpts.retries as number | undefined,
     });
 
     if (!result.success) {

@@ -36,7 +36,12 @@ program
   .option("--from <date>", "start date for range query (YYYYMMDD)")
   .option("--to <date>", "end date for range query (YYYYMMDD)")
   .option("--filter <expression>", 'filter results (e.g. "FLUC_RT > 5")')
-  .option("--save <path>", "save output to file instead of stdout");
+  .option("--save <path>", "save output to file instead of stdout")
+  .option(
+    "--retries <n>",
+    "max retries on network error (default: 3)",
+    parseInt,
+  );
 
 registerAuthCommand(program);
 registerIndexCommand(program);

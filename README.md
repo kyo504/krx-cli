@@ -175,6 +175,7 @@ krx schema stock.stk_bydd_trd
 | `--no-cache`            | 캐시 무시하고 새로 조회             | -                              |
 | `--filter <expression>` | 필터 표현식 (예: "FLUC_RT > 5")     | -                              |
 | `--save <path>`         | 결과를 파일로 저장                  | -                              |
+| `--retries <n>`         | 네트워크 에러 시 재시도 (기본: 3)   | -                              |
 | `--dry-run`             | API 호출 없이 요청 내용 출력        | -                              |
 | `-v, --verbose`         | 상세 로그 (stderr)                  | -                              |
 

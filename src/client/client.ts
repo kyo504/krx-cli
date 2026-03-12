@@ -1,5 +1,6 @@
 import { getCached, setCached } from "../cache/store.js";
 import { checkRateLimit, incrementCallCount } from "./rate-limit.js";
+import { withRetry } from "./retry.js";
 
 export const BASE_URL = "https://data-dbg.krx.co.kr";
 
@@ -8,6 +9,7 @@ export interface KrxRequestOptions {
   readonly params: Record<string, string>;
   readonly apiKey: string;
   readonly cache?: boolean;
+  readonly retries?: number;
 }
 
 export interface KrxResponse<T = Record<string, string>> {
@@ -53,14 +55,18 @@ export async function krxFetch<T = Record<string, string>>(
 
   const url = `${BASE_URL}${options.endpoint}`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      AUTH_KEY: options.apiKey,
-      "Content-Type": "application/json; charset=utf-8",
-    },
-    body: JSON.stringify(options.params),
-  });
+  const response = await withRetry(
+    () =>
+      fetch(url, {
+        method: "POST",
+        headers: {
+          AUTH_KEY: options.apiKey,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(options.params),
+      }),
+    { maxRetries: options.retries ?? 3 },
+  );
 
   incrementCallCount();
 

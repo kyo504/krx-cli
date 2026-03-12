@@ -174,6 +174,7 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 --filter <expression>    Filter results (e.g. "FLUC_RT > 5", "MKT_NM == KOSPI")
 --dry-run                Show request details without calling API
 --save <path>            Save output to file instead of stdout
+--retries <n>            Max retries on network error (default: 3)
 --verbose, -v            Verbose logging to stderr
 ```
 
