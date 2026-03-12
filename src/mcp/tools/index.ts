@@ -16,7 +16,7 @@ interface ToolDefinition {
   readonly description: string;
   readonly inputSchema: ZodRawShape;
   readonly handler: (args: Record<string, unknown>) => Promise<{
-    content: readonly { type: string; text: string }[];
+    content: { type: "text"; text: string }[];
     isError?: boolean;
   }>;
 }
@@ -82,7 +82,10 @@ function filterFields(
     const filtered: Record<string, string> = {};
     for (const key of Object.keys(row)) {
       if (fieldSet.has(key)) {
-        filtered[key] = row[key];
+        const value = row[key];
+        if (value !== undefined) {
+          filtered[key] = value;
+        }
       }
     }
     return filtered;
