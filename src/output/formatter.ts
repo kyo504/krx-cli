@@ -1,4 +1,4 @@
-export type OutputFormat = "json" | "table" | "ndjson";
+export type OutputFormat = "json" | "table" | "ndjson" | "csv";
 
 export function detectOutputFormat(explicit?: string): OutputFormat {
   if (explicit) {
@@ -21,6 +21,8 @@ export function formatOutput(
       return filtered.map((row) => JSON.stringify(row)).join("\n");
     case "table":
       return formatTable(filtered);
+    case "csv":
+      return formatCsv(filtered);
   }
 }
 
@@ -54,12 +56,32 @@ function formatTable(data: readonly Record<string, unknown>[]): string {
   const header = keys.map((k, i) => k.padEnd(widths[i] ?? 0)).join("  ");
   const separator = widths.map((w) => "-".repeat(w)).join("  ");
   const rows = data.map((row) =>
-    keys
-      .map((k, i) => String(row[k] ?? "").padEnd(widths[i] ?? 0))
-      .join("  "),
+    keys.map((k, i) => String(row[k] ?? "").padEnd(widths[i] ?? 0)).join("  "),
   );
 
   return [header, separator, ...rows].join("\n");
+}
+
+function escapeCsvField(value: string): string {
+  if (value.includes(",") || value.includes('"') || value.includes("\n")) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+function formatCsv(data: readonly Record<string, unknown>[]): string {
+  if (data.length === 0) return "";
+
+  const firstRow = data[0];
+  if (!firstRow) return "";
+
+  const keys = Object.keys(firstRow);
+  const header = keys.join(",");
+  const rows = data.map((row) =>
+    keys.map((k) => escapeCsvField(String(row[k] ?? ""))).join(","),
+  );
+
+  return [header, ...rows].join("\n");
 }
 
 export function writeOutput(output: string): void {

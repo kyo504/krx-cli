@@ -35,7 +35,8 @@ program
   .option("--no-cache", "bypass cache and fetch fresh data")
   .option("--from <date>", "start date for range query (YYYYMMDD)")
   .option("--to <date>", "end date for range query (YYYYMMDD)")
-  .option("--filter <expression>", 'filter results (e.g. "FLUC_RT > 5")');
+  .option("--filter <expression>", 'filter results (e.g. "FLUC_RT > 5")')
+  .option("--save <path>", "save output to file instead of stdout");
 
 registerAuthCommand(program);
 registerIndexCommand(program);

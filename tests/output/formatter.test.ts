@@ -47,6 +47,48 @@ describe("formatOutput", () => {
     });
   });
 
+  describe("csv", () => {
+    it("outputs CSV with header row", () => {
+      const result = formatOutput(SAMPLE_DATA, "csv");
+      const lines = result.split("\n");
+      expect(lines[0]).toBe("IDX_NM,CLSPRC_IDX,FLUC_RT");
+      expect(lines[1]).toBe("코스피,2650.00,0.5");
+      expect(lines[2]).toBe("코스피 200,350.00,-0.2");
+    });
+
+    it("escapes fields containing commas", () => {
+      const data = [{ NAME: "A,B", VALUE: "100" }];
+      const result = formatOutput(data, "csv");
+      const lines = result.split("\n");
+      expect(lines[1]).toBe('"A,B",100');
+    });
+
+    it("escapes fields containing double quotes", () => {
+      const data = [{ NAME: 'A"B', VALUE: "100" }];
+      const result = formatOutput(data, "csv");
+      const lines = result.split("\n");
+      expect(lines[1]).toBe('"A""B",100');
+    });
+
+    it("escapes fields containing newlines", () => {
+      const data = [{ NAME: "A\nB", VALUE: "100" }];
+      const result = formatOutput(data, "csv");
+      const lines = result.split("\n");
+      expect(lines[1]).toContain('"A');
+    });
+
+    it("returns empty string for empty data", () => {
+      const result = formatOutput([], "csv");
+      expect(result).toBe("");
+    });
+
+    it("handles Korean characters correctly", () => {
+      const data = [{ 종목명: "삼성전자", 등락률: "2.50" }];
+      const result = formatOutput(data, "csv");
+      expect(result).toContain("삼성전자");
+    });
+  });
+
   describe("field filtering", () => {
     it("filters to specified fields", () => {
       const result = formatOutput(SAMPLE_DATA, "json", ["IDX_NM"]);

@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import type { Command } from "commander";
 import { getApiKey } from "../client/auth.js";
 import { krxFetch } from "../client/client.js";
@@ -150,7 +152,24 @@ export async function executeCommand(
 
   const format = detectOutputFormat(parentOpts.output);
   const fields = parentOpts.fields?.split(",");
-  writeOutput(formatOutput(data, format, fields));
+  const output = formatOutput(data, format, fields);
+
+  const savePath = parentOpts.save as string | undefined;
+  if (savePath) {
+    try {
+      const dir = path.dirname(savePath);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(savePath, output + "\n", "utf-8");
+      writeOutput(JSON.stringify({ saved: savePath, records: data.length }));
+    } catch (err) {
+      writeError(
+        `Failed to save file: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      process.exit(EXIT_CODES.GENERAL_ERROR);
+    }
+  } else {
+    writeOutput(output);
+  }
 }
 
 export function resolveEndpoint(
