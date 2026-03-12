@@ -9,6 +9,7 @@ import {
 } from "../output/formatter.js";
 import { EXIT_CODES } from "./exit-codes.js";
 import { handleKrxError } from "./error-handler.js";
+import { applyPipeline } from "../utils/data-pipeline.js";
 
 interface ExecuteCommandOptions {
   readonly endpoint: string;
@@ -67,15 +68,17 @@ export async function executeCommand(
     process.exit(EXIT_CODES.NO_DATA);
   }
 
+  let data = result.data as unknown as Record<string, unknown>[];
+
+  data = applyPipeline(data, {
+    sort: parentOpts.sort as string | undefined,
+    direction: parentOpts.asc ? "asc" : "desc",
+    limit: parentOpts.limit as number | undefined,
+  }) as Record<string, unknown>[];
+
   const format = detectOutputFormat(parentOpts.output);
   const fields = parentOpts.fields?.split(",");
-  writeOutput(
-    formatOutput(
-      result.data as unknown as Record<string, unknown>[],
-      format,
-      fields,
-    ),
-  );
+  writeOutput(formatOutput(data, format, fields));
 }
 
 export function resolveEndpoint(

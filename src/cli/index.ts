@@ -25,7 +25,10 @@ program
   .option("-f, --fields <fields>", "comma-separated fields to include")
   .option("--dry-run", "show request without calling API")
   .option("-v, --verbose", "verbose output to stderr")
-  .option("--code <isuCd>", "filter by stock code (ISU_CD)");
+  .option("--code <isuCd>", "filter by stock code (ISU_CD)")
+  .option("--sort <field>", "sort results by field name")
+  .option("--asc", "sort ascending (default: descending)")
+  .option("--limit <n>", "limit number of results", parseInt);
 
 registerAuthCommand(program);
 registerIndexCommand(program);

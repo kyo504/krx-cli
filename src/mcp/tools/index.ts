@@ -9,6 +9,7 @@ import { krxFetch } from "../../client/client.js";
 import { getApiKey } from "../../client/auth.js";
 import { validateDate } from "../../validator/index.js";
 import { getRecentTradingDate } from "../../utils/date.js";
+import { applyPipeline } from "../../utils/data-pipeline.js";
 
 type ZodRawShape = Record<string, z.ZodType>;
 
@@ -71,6 +72,12 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
       .string()
       .optional()
       .describe("Stock/item code (ISU_CD) to filter a specific item"),
+    sort: z.string().optional().describe("Sort results by this field name"),
+    sort_direction: z
+      .enum(["asc", "desc"])
+      .optional()
+      .describe("Sort direction (default: desc)"),
+    limit: z.number().optional().describe("Limit number of results returned"),
     fields: z
       .array(z.string())
       .optional()
@@ -156,8 +163,22 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         return errorResult(result.error ?? "API request failed");
       }
 
+      const sortField = args.sort as string | undefined;
+      const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
+      const limitN = args.limit as number | undefined;
+
+      let data: readonly Record<string, string>[] = result.data;
+
+      data = applyPipeline(data, {
+        sort: sortField,
+        direction: sortDirection,
+        limit: limitN,
+      }) as Record<string, string>[];
+
       const fields = args.fields as string[] | undefined;
-      const data = fields ? filterFields(result.data, fields) : result.data;
+      if (fields) {
+        data = filterFields(data, fields);
+      }
 
       return {
         content: [
