@@ -1,6 +1,16 @@
 import { Command } from "commander";
 import { validateDate, validateMarket } from "../../validator/index.js";
+import { validateNoInjection } from "../../validator/index.js";
 import { executeCommand, resolveEndpoint } from "../command-helper.js";
+import { getApiKey } from "../../client/auth.js";
+import { searchStock } from "../../client/search.js";
+import {
+  writeOutput,
+  writeError,
+  formatOutput,
+  detectOutputFormat,
+} from "../../output/formatter.js";
+import { EXIT_CODES } from "../exit-codes.js";
 
 const TRADING_ENDPOINTS: Record<string, string> = {
   kospi: "/svc/apis/sto/stk_bydd_trd",
@@ -52,5 +62,38 @@ export function registerStockCommand(program: Command): void {
         params: {},
         program,
       });
+    });
+
+  stock
+    .command("search <query>")
+    .description("Search stocks by name")
+    .action(async (query: string) => {
+      validateNoInjection(query);
+
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        writeError(
+          "No API key configured. Use 'krx auth set <key>' or set KRX_API_KEY env var.",
+        );
+        process.exit(EXIT_CODES.AUTH_FAILURE);
+      }
+
+      const results = await searchStock(apiKey, query);
+
+      if (results.length === 0) {
+        writeError(`No stocks found matching "${query}"`);
+        process.exit(EXIT_CODES.NO_DATA);
+      }
+
+      const parentOpts = program.opts();
+      const format = detectOutputFormat(parentOpts.output);
+      const fields = parentOpts.fields?.split(",");
+      writeOutput(
+        formatOutput(
+          results as unknown as Record<string, unknown>[],
+          format,
+          fields,
+        ),
+      );
     });
 }
