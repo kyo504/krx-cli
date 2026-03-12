@@ -5,11 +5,17 @@ import { createRateLimitTool } from "./tools/rate-limit-tool.js";
 import { createSearchTool } from "./tools/search-tool.js";
 import { createMarketSummaryTool } from "./tools/market-summary-tool.js";
 import { createWatchlistTool } from "./tools/watchlist-tool.js";
+import {
+  createWatchlistResource,
+  createRateLimitResource,
+  createServiceStatusResource,
+} from "./resources/index.js";
+import { getVersion } from "../cli/commands/version.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "krx-cli",
-    version: "1.2.0",
+    version: getVersion(),
   });
 
   const allTools = [
@@ -24,6 +30,18 @@ export function createServer(): McpServer {
   for (const tool of allTools) {
     server.tool(tool.name, tool.description, tool.inputSchema, async (args) => {
       return tool.handler(args as Record<string, unknown>);
+    });
+  }
+
+  const allResources = [
+    createWatchlistResource(),
+    createRateLimitResource(),
+    createServiceStatusResource(),
+  ];
+
+  for (const resource of allResources) {
+    server.resource(resource.name, resource.uri, async (uri) => {
+      return resource.handler(uri);
     });
   }
 

@@ -364,3 +364,13 @@ krx schema index.kospi_dd_trd    # Shows params + responseFields
 krx schema stock.stk_bydd_trd   # Stock endpoint fields
 krx schema --all                  # All 31 endpoints
 ```
+
+## MCP Resources
+
+Read-only state data exposed as MCP Resources (for MCP clients):
+
+| Resource               | Description                         |
+| ---------------------- | ----------------------------------- |
+| `krx://watchlist`      | Watchlist entries (JSON)            |
+| `krx://rate-limit`     | Daily API call status (JSON)        |
+| `krx://service-status` | Per-category approval status (JSON) |

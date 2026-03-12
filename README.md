@@ -342,6 +342,16 @@ API 키는 `krx auth set <key>`로 등록한 것이 자동으로 사용됩니다
 | `krx_schema`         | 엔드포인트 응답 필드 스키마 조회             |
 | `krx_rate_limit`     | 일일 API 호출 현황 조회                      |
 
+### 제공 Resource
+
+MCP Resource로 읽기 전용 상태 데이터를 노출합니다.
+
+| Resource               | 설명                               |
+| ---------------------- | ---------------------------------- |
+| `krx://watchlist`      | 워치리스트 종목 목록 (JSON)        |
+| `krx://rate-limit`     | 일일 API 호출 현황 (JSON)          |
+| `krx://service-status` | 카테고리별 서비스 승인 상태 (JSON) |
+
 ### 사용 예시
 
 MCP 클라이언트에서 자연어로 요청하면 됩니다:
