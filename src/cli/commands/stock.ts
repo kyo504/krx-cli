@@ -1,15 +1,6 @@
 import { Command } from "commander";
-import { getApiKey } from "../../client/auth.js";
-import { krxFetch } from "../../client/client.js";
 import { validateDate, validateMarket } from "../../validator/index.js";
-import {
-  writeOutput,
-  writeError,
-  formatOutput,
-  detectOutputFormat,
-} from "../../output/formatter.js";
-import { EXIT_CODES } from "../index.js";
-import { handleKrxError } from "../error-handler.js";
+import { executeCommand, resolveEndpoint } from "../command-helper.js";
 
 const TRADING_ENDPOINTS: Record<string, string> = {
   kospi: "/svc/apis/sto/stk_bydd_trd",
@@ -32,69 +23,20 @@ export function registerStockCommand(program: Command): void {
     .requiredOption("--date <date>", "trading date (YYYYMMDD)")
     .option("--market <market>", "market: kospi, kosdaq, konex", "kospi")
     .action(async (opts: { date: string; market: string }) => {
-      try {
-        const date = validateDate(opts.date);
-        const market = validateMarket(opts.market);
+      const date = validateDate(opts.date);
+      validateMarket(opts.market);
+      const endpoint = resolveEndpoint(
+        TRADING_ENDPOINTS,
+        opts.market,
+        "market",
+      );
 
-        const endpoint = TRADING_ENDPOINTS[market];
-        if (!endpoint) {
-          writeError(`Invalid market for stock list: ${market}`);
-          process.exit(EXIT_CODES.USAGE_ERROR);
-        }
-
-        const apiKey = getApiKey();
-        if (!apiKey) {
-          writeError(
-            "No API key configured. Use 'krx auth set <key>' or set KRX_API_KEY env var.",
-          );
-          process.exit(EXIT_CODES.AUTH_FAILURE);
-        }
-
-        const parentOpts = program.opts();
-        if (parentOpts.dryRun) {
-          writeOutput(
-            JSON.stringify(
-              {
-                method: "POST",
-                endpoint,
-                params: { basDd: date },
-                headers: { AUTH_KEY: "***" },
-              },
-              null,
-              2,
-            ),
-          );
-          return;
-        }
-
-        const result = await krxFetch({
-          endpoint,
-          params: { basDd: date },
-          apiKey,
-        });
-
-        if (!result.success) {
-          handleKrxError(result);
-        }
-
-        if (result.data.length === 0) {
-          writeError(`No data for date ${date}`);
-          process.exit(EXIT_CODES.NO_DATA);
-        }
-
-        const format = detectOutputFormat(parentOpts.output);
-        const fields = parentOpts.fields?.split(",");
-        writeOutput(
-          formatOutput(
-            result.data as unknown as Record<string, unknown>[],
-            format,
-            fields,
-          ),
-        );
-      } catch (err) {
-        writeError(err instanceof Error ? err.message : String(err));
-        process.exit(EXIT_CODES.USAGE_ERROR);
-      }
+      await executeCommand({
+        endpoint,
+        params: { basDd: date },
+        program,
+        noDataMessage: `No data for date ${date}`,
+      });
     });
 
   stock
@@ -102,67 +44,13 @@ export function registerStockCommand(program: Command): void {
     .description("List stock base information")
     .option("--market <market>", "market: kospi, kosdaq, konex", "kospi")
     .action(async (opts: { market: string }) => {
-      try {
-        const market = validateMarket(opts.market);
+      validateMarket(opts.market);
+      const endpoint = resolveEndpoint(INFO_ENDPOINTS, opts.market, "market");
 
-        const endpoint = INFO_ENDPOINTS[market];
-        if (!endpoint) {
-          writeError(`Invalid market for stock info: ${market}`);
-          process.exit(EXIT_CODES.USAGE_ERROR);
-        }
-
-        const apiKey = getApiKey();
-        if (!apiKey) {
-          writeError(
-            "No API key configured. Use 'krx auth set <key>' or set KRX_API_KEY env var.",
-          );
-          process.exit(EXIT_CODES.AUTH_FAILURE);
-        }
-
-        const parentOpts = program.opts();
-        if (parentOpts.dryRun) {
-          writeOutput(
-            JSON.stringify(
-              {
-                method: "POST",
-                endpoint,
-                params: {},
-                headers: { AUTH_KEY: "***" },
-              },
-              null,
-              2,
-            ),
-          );
-          return;
-        }
-
-        const result = await krxFetch({
-          endpoint,
-          params: {},
-          apiKey,
-        });
-
-        if (!result.success) {
-          handleKrxError(result);
-        }
-
-        if (result.data.length === 0) {
-          writeError("No data");
-          process.exit(EXIT_CODES.NO_DATA);
-        }
-
-        const format = detectOutputFormat(parentOpts.output);
-        const fields = parentOpts.fields?.split(",");
-        writeOutput(
-          formatOutput(
-            result.data as unknown as Record<string, unknown>[],
-            format,
-            fields,
-          ),
-        );
-      } catch (err) {
-        writeError(err instanceof Error ? err.message : String(err));
-        process.exit(EXIT_CODES.USAGE_ERROR);
-      }
+      await executeCommand({
+        endpoint,
+        params: {},
+        program,
+      });
     });
 }

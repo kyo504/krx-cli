@@ -1,0 +1,9 @@
+export const EXIT_CODES = {
+  SUCCESS: 0,
+  GENERAL_ERROR: 1,
+  USAGE_ERROR: 2,
+  NO_DATA: 3,
+  AUTH_FAILURE: 4,
+  RATE_LIMIT: 5,
+  SERVICE_NOT_APPROVED: 6,
+} as const;

@@ -3,6 +3,7 @@ import * as path from "node:path";
 import * as os from "node:os";
 import { CATEGORIES, type CategoryId } from "./endpoints.js";
 import { krxFetch } from "./client.js";
+import { getRecentTradingDate } from "../utils/date.js";
 
 const CONFIG_DIR = path.join(os.homedir(), ".krx-cli");
 const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
@@ -36,18 +37,6 @@ export function getApiKey(): string | undefined {
 export function saveApiKey(apiKey: string): void {
   const config = readConfig();
   writeConfig({ ...config, apiKey });
-}
-
-function getRecentTradingDate(): string {
-  const now = new Date();
-  const day = now.getDay();
-  const daysBack = day === 0 ? 2 : day === 6 ? 1 : day === 1 ? 3 : 1;
-  const target = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
-
-  const yyyy = target.getFullYear().toString();
-  const mm = (target.getMonth() + 1).toString().padStart(2, "0");
-  const dd = target.getDate().toString().padStart(2, "0");
-  return `${yyyy}${mm}${dd}`;
 }
 
 export interface ServiceStatus {

@@ -1,6 +1,6 @@
 import type { KrxResponse } from "../client/client.js";
 import { writeError } from "../output/formatter.js";
-import { EXIT_CODES } from "./index.js";
+import { EXIT_CODES } from "./exit-codes.js";
 
 export function handleKrxError(result: KrxResponse): never {
   const exitCode =

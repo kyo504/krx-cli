@@ -8,6 +8,7 @@ import {
 import { krxFetch } from "../../client/client.js";
 import { getApiKey } from "../../client/auth.js";
 import { validateDate } from "../../validator/index.js";
+import { getRecentTradingDate } from "../../utils/date.js";
 
 type ZodRawShape = Record<string, z.ZodType>;
 
@@ -90,18 +91,6 @@ function filterFields(
     }
     return filtered;
   });
-}
-
-function getRecentTradingDate(): string {
-  const now = new Date();
-  const day = now.getDay();
-  const daysBack = day === 0 ? 2 : day === 6 ? 1 : day === 1 ? 3 : 1;
-  const target = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
-
-  const yyyy = target.getFullYear().toString();
-  const mm = (target.getMonth() + 1).toString().padStart(2, "0");
-  const dd = target.getDate().toString().padStart(2, "0");
-  return `${yyyy}${mm}${dd}`;
 }
 
 function errorResult(message: string) {

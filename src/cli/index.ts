@@ -11,16 +11,7 @@ import { registerSchemaCommand } from "./commands/schema.js";
 import { registerVersionCommand, getVersion } from "./commands/version.js";
 import { registerUpdateCommand } from "./commands/update.js";
 import { writeError } from "../output/formatter.js";
-
-const EXIT_CODES = {
-  SUCCESS: 0,
-  GENERAL_ERROR: 1,
-  USAGE_ERROR: 2,
-  NO_DATA: 3,
-  AUTH_FAILURE: 4,
-  RATE_LIMIT: 5,
-  SERVICE_NOT_APPROVED: 6,
-} as const;
+import { EXIT_CODES } from "./exit-codes.js";
 
 export { EXIT_CODES };
 
