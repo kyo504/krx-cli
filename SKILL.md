@@ -134,6 +134,17 @@ krx market summary --date 20260310    # Specific date
 
 Returns: KOSPI/KOSDAQ indices, top 5 gainers/losers, advancing/declining/unchanged counts, total volume/value.
 
+### Watchlist (관심종목)
+
+```bash
+krx watchlist add 삼성전자          # Search and add to watchlist
+krx watchlist remove 삼성전자       # Remove by exact name
+krx watchlist remove KR7005930003   # Remove by ISU_CD
+krx watchlist list                   # List all watchlist entries
+krx watchlist show                   # Show prices for watchlist stocks
+krx watchlist show --date 20260310  # Specific date
+```
+
 ### Cache Management
 
 ```bash
@@ -207,6 +218,13 @@ krx index list --market kospi --from 20260301 --to 20260310 --fields IDX_NM,BAS_
 
 ```bash
 krx market summary --date 20260310
+```
+
+### Track and monitor stocks
+
+```bash
+krx watchlist add 삼성전자           # Add to watchlist
+krx watchlist show --date 20260310  # View prices for all watchlist stocks
 ```
 
 ### Check API availability before querying
