@@ -224,6 +224,80 @@ mkdir -p ~/.claude/skills && cp SKILL.md ~/.claude/skills/krx-cli.md
 mkdir -p ~/.cursor/skills && cp SKILL.md ~/.cursor/skills/krx-cli.md
 ```
 
+## MCP 서버 (Claude Desktop / ChatGPT Desktop)
+
+CLI 외에 MCP(Model Context Protocol) 서버도 제공합니다. Claude Desktop, ChatGPT Desktop 등 MCP를 지원하는 클라이언트에서 사용할 수 있습니다.
+
+### 설정 (Claude Desktop)
+
+API 키는 `krx auth set <key>`로 등록한 것이 자동으로 사용됩니다.
+`krx-mcp`는 `npm install -g krx-cli`로 설치하면 함께 설치됩니다.
+
+### Claude Desktop
+
+설정 파일 위치:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "krx": {
+      "command": "krx-mcp"
+    }
+  }
+}
+```
+
+### ChatGPT Desktop
+
+설정 파일 위치:
+
+- **macOS**: `~/Library/Application Support/com.openai.chat/mcp.json`
+- **Windows**: `%LOCALAPPDATA%\OpenAI\ChatGPT\mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "krx": {
+      "command": "krx-mcp"
+    }
+  }
+}
+```
+
+설정 후 앱을 재시작하면 MCP 도구가 활성화됩니다.
+
+### 제공 Tool
+
+| Tool             | 설명                                       |
+| ---------------- | ------------------------------------------ |
+| `krx_index`      | 지수 일별시세 (KOSPI/KOSDAQ/KRX/채권/파생) |
+| `krx_stock`      | 주식 일별매매정보 + 종목 기본정보          |
+| `krx_etp`        | ETF/ETN/ELW 일별매매정보                   |
+| `krx_bond`       | 채권 일별매매정보 (국채/일반/소액)         |
+| `krx_derivative` | 선물/옵션 일별매매정보                     |
+| `krx_commodity`  | 금/석유/배출권 일별매매정보                |
+| `krx_esg`        | ESG 지수/채권/ETP 정보                     |
+| `krx_schema`     | 엔드포인트 응답 필드 스키마 조회           |
+| `krx_rate_limit` | 일일 API 호출 현황 조회                    |
+
+### 사용 예시
+
+MCP 클라이언트에서 자연어로 요청하면 됩니다:
+
+```
+"오늘 코스피 지수 보여줘"
+→ krx_index tool 호출 (endpoint: "kospi_dd_trd")
+
+"삼성전자 주가 알려줘"
+→ krx_stock tool 호출 (endpoint: "stk_bydd_trd", fields: ["ISU_NM", "TDD_CLSPRC", "FLUC_RT"])
+
+"오늘 API 몇 번 호출했어?"
+→ krx_rate_limit tool 호출
+```
+
 ## 개발
 
 ```bash
