@@ -24,7 +24,8 @@ program
   .option("-o, --output <format>", "output format: json, table, ndjson")
   .option("-f, --fields <fields>", "comma-separated fields to include")
   .option("--dry-run", "show request without calling API")
-  .option("-v, --verbose", "verbose output to stderr");
+  .option("-v, --verbose", "verbose output to stderr")
+  .option("--code <isuCd>", "filter by stock code (ISU_CD)");
 
 registerAuthCommand(program);
 registerIndexCommand(program);

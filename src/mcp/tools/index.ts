@@ -67,6 +67,10 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
       .describe(
         "Trading date in YYYYMMDD format (default: recent trading day)",
       ),
+    isuCd: z
+      .string()
+      .optional()
+      .describe("Stock/item code (ISU_CD) to filter a specific item"),
     fields: z
       .array(z.string())
       .optional()
@@ -136,9 +140,15 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         );
       }
 
+      const isuCd = args.isuCd as string | undefined;
+      const params: Record<string, string> = { basDd: dateStr };
+      if (isuCd) {
+        params["isuCd"] = isuCd;
+      }
+
       const result = await krxFetch({
         endpoint: endpoint.path,
-        params: { basDd: dateStr },
+        params,
         apiKey,
       });
 

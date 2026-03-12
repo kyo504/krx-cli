@@ -31,13 +31,18 @@ export async function executeCommand(
   }
 
   const parentOpts = program.opts();
+
+  const finalParams = parentOpts.code
+    ? { ...params, isuCd: parentOpts.code as string }
+    : params;
+
   if (parentOpts.dryRun) {
     writeOutput(
       JSON.stringify(
         {
           method: "POST",
           endpoint,
-          params,
+          params: finalParams,
           headers: { AUTH_KEY: "***" },
         },
         null,
@@ -49,7 +54,7 @@ export async function executeCommand(
 
   const result = await krxFetch({
     endpoint,
-    params,
+    params: finalParams,
     apiKey,
   });
 
