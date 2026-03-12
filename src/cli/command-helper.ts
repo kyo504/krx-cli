@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getApiKey } from "../client/auth.js";
 import { krxFetch } from "../client/client.js";
+import { fetchDateRange } from "../client/range-fetch.js";
 import {
   writeOutput,
   writeError,
@@ -10,6 +11,7 @@ import {
 import { EXIT_CODES } from "./exit-codes.js";
 import { handleKrxError } from "./error-handler.js";
 import { applyPipeline } from "../utils/data-pipeline.js";
+import { validateDate } from "../validator/index.js";
 
 interface ExecuteCommandOptions {
   readonly endpoint: string;
@@ -53,23 +55,82 @@ export async function executeCommand(
     return;
   }
 
-  const result = await krxFetch({
-    endpoint,
-    params: finalParams,
-    apiKey,
-    cache: parentOpts.cache as boolean,
-  });
+  const fromDate = parentOpts.from as string | undefined;
+  const toDate = parentOpts.to as string | undefined;
 
-  if (!result.success) {
-    handleKrxError(result);
+  if ((fromDate && !toDate) || (!fromDate && toDate)) {
+    writeError("Both --from and --to must be provided together");
+    process.exit(EXIT_CODES.USAGE_ERROR);
   }
 
-  if (result.data.length === 0) {
+  if (fromDate) {
+    try {
+      validateDate(fromDate);
+    } catch (err) {
+      writeError(
+        `Invalid --from date: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      process.exit(EXIT_CODES.USAGE_ERROR);
+    }
+  }
+
+  if (toDate) {
+    try {
+      validateDate(toDate);
+    } catch (err) {
+      writeError(
+        `Invalid --to date: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      process.exit(EXIT_CODES.USAGE_ERROR);
+    }
+  }
+
+  const isDateRange = fromDate && toDate;
+
+  let data: Record<string, unknown>[];
+
+  if (isDateRange) {
+    const restParams = Object.fromEntries(
+      Object.entries(finalParams).filter(([k]) => k !== "basDd"),
+    );
+    const rangeResult = await fetchDateRange({
+      endpoint,
+      from: fromDate,
+      to: toDate,
+      apiKey,
+      cache: parentOpts.cache as boolean,
+      extraParams: restParams,
+    });
+
+    if (!rangeResult.success) {
+      writeError(rangeResult.error ?? "Date range fetch failed");
+      process.exit(EXIT_CODES.GENERAL_ERROR);
+    }
+
+    if (rangeResult.failedDays > 0) {
+      writeError(`Warning: ${rangeResult.failedDays} day(s) failed to fetch`);
+    }
+
+    data = rangeResult.data as unknown as Record<string, unknown>[];
+  } else {
+    const result = await krxFetch({
+      endpoint,
+      params: finalParams,
+      apiKey,
+      cache: parentOpts.cache as boolean,
+    });
+
+    if (!result.success) {
+      handleKrxError(result);
+    }
+
+    data = result.data as unknown as Record<string, unknown>[];
+  }
+
+  if (data.length === 0) {
     writeError(noDataMessage ?? "No data");
     process.exit(EXIT_CODES.NO_DATA);
   }
-
-  let data = result.data as unknown as Record<string, unknown>[];
 
   data = applyPipeline(data, {
     sort: parentOpts.sort as string | undefined,

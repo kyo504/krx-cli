@@ -1,0 +1,262 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { fetchDateRange } from "../../src/client/range-fetch.js";
+
+vi.mock("../../src/client/client.js", () => ({
+  krxFetch: vi.fn(),
+}));
+
+vi.mock("../../src/utils/date.js", () => ({
+  getTradingDays: vi.fn(),
+  formatDateToYYYYMMDD: () => "20260312",
+}));
+
+import { krxFetch } from "../../src/client/client.js";
+import { getTradingDays } from "../../src/utils/date.js";
+
+const mockedKrxFetch = vi.mocked(krxFetch);
+const mockedGetTradingDays = vi.mocked(getTradingDays);
+
+describe("fetchDateRange", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+  });
+
+  it("fetches data for each trading day and merges results", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309", "20260310"]);
+    mockedKrxFetch
+      .mockResolvedValueOnce({
+        success: true,
+        data: [{ BAS_DD: "20260309", IDX_NM: "코스피", TDD_CLSPRC: "2700" }],
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        data: [{ BAS_DD: "20260310", IDX_NM: "코스피", TDD_CLSPRC: "2710" }],
+      });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260310",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toHaveLength(2);
+    expect(result.data[0]).toEqual({
+      BAS_DD: "20260309",
+      IDX_NM: "코스피",
+      TDD_CLSPRC: "2700",
+    });
+    expect(result.data[1]).toEqual({
+      BAS_DD: "20260310",
+      IDX_NM: "코스피",
+      TDD_CLSPRC: "2710",
+    });
+  });
+
+  it("skips days with empty data (holidays)", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309", "20260310", "20260311"]);
+    mockedKrxFetch
+      .mockResolvedValueOnce({
+        success: true,
+        data: [{ BAS_DD: "20260309", IDX_NM: "코스피" }],
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        data: [],
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        data: [{ BAS_DD: "20260311", IDX_NM: "코스피" }],
+      });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260311",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toHaveLength(2);
+  });
+
+  it("returns error when all days fail", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309"]);
+    mockedKrxFetch.mockResolvedValue({
+      success: false,
+      data: [],
+      error: "HTTP 500: Internal Server Error",
+    });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260309",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBeDefined();
+  });
+
+  it("returns partial results when some days fail", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309", "20260310"]);
+    mockedKrxFetch
+      .mockResolvedValueOnce({
+        success: true,
+        data: [{ BAS_DD: "20260309", IDX_NM: "코스피" }],
+      })
+      .mockResolvedValueOnce({
+        success: false,
+        data: [],
+        error: "HTTP 500",
+      });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260310",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toHaveLength(1);
+  });
+
+  it("respects concurrency limit", async () => {
+    const days = Array.from({ length: 10 }, (_, i) => {
+      const d = (1 + i).toString().padStart(2, "0");
+      return `202603${d}`;
+    });
+    mockedGetTradingDays.mockReturnValue(days);
+
+    let activeConcurrent = 0;
+    let maxConcurrent = 0;
+
+    mockedKrxFetch.mockImplementation(async (opts) => {
+      activeConcurrent += 1;
+      maxConcurrent = Math.max(maxConcurrent, activeConcurrent);
+      await new Promise((r) => setTimeout(r, 10));
+      activeConcurrent -= 1;
+      return {
+        success: true,
+        data: [{ BAS_DD: opts.params["basDd"] ?? "" }],
+      };
+    });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260301",
+      to: "20260310",
+      apiKey: "test-key",
+      concurrency: 3,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toHaveLength(10);
+    expect(maxConcurrent).toBeLessThanOrEqual(3);
+  });
+
+  it("returns empty data when no trading days in range", async () => {
+    mockedGetTradingDays.mockReturnValue([]);
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260307",
+      to: "20260308",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual([]);
+  });
+
+  it("passes cache option through to krxFetch", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309"]);
+    mockedKrxFetch.mockResolvedValue({
+      success: true,
+      data: [{ BAS_DD: "20260309" }],
+    });
+
+    await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260309",
+      apiKey: "test-key",
+      cache: false,
+    });
+
+    expect(mockedKrxFetch).toHaveBeenCalledWith(
+      expect.objectContaining({ cache: false }),
+    );
+  });
+
+  it("preserves date order in results", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309", "20260310", "20260311"]);
+
+    // Simulate out-of-order completion
+    mockedKrxFetch
+      .mockImplementationOnce(async () => {
+        await new Promise((r) => setTimeout(r, 30));
+        return { success: true, data: [{ BAS_DD: "20260309" }] };
+      })
+      .mockImplementationOnce(async () => {
+        await new Promise((r) => setTimeout(r, 10));
+        return { success: true, data: [{ BAS_DD: "20260310" }] };
+      })
+      .mockImplementationOnce(async () => {
+        await new Promise((r) => setTimeout(r, 20));
+        return { success: true, data: [{ BAS_DD: "20260311" }] };
+      });
+
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260309",
+      to: "20260311",
+      apiKey: "test-key",
+    });
+
+    expect(result.data.map((d) => d["BAS_DD"])).toEqual([
+      "20260309",
+      "20260310",
+      "20260311",
+    ]);
+  });
+
+  it("returns error when from is after to", async () => {
+    const result = await fetchDateRange({
+      endpoint: "/svc/apis/idx/kospi_dd_trd",
+      from: "20260315",
+      to: "20260310",
+      apiKey: "test-key",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("must not be after");
+    expect(mockedKrxFetch).not.toHaveBeenCalled();
+  });
+
+  it("passes additional params (like isuCd) to each fetch", async () => {
+    mockedGetTradingDays.mockReturnValue(["20260309"]);
+    mockedKrxFetch.mockResolvedValue({
+      success: true,
+      data: [{ BAS_DD: "20260309" }],
+    });
+
+    await fetchDateRange({
+      endpoint: "/svc/apis/sto/stk_bydd_trd",
+      from: "20260309",
+      to: "20260309",
+      apiKey: "test-key",
+      extraParams: { isuCd: "KR7005930003" },
+    });
+
+    expect(mockedKrxFetch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        params: { basDd: "20260309", isuCd: "KR7005930003" },
+      }),
+    );
+  });
+});

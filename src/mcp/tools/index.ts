@@ -6,6 +6,7 @@ import {
   type EndpointDef,
 } from "../../client/endpoints.js";
 import { krxFetch } from "../../client/client.js";
+import { fetchDateRange } from "../../client/range-fetch.js";
 import { getApiKey } from "../../client/auth.js";
 import { validateDate } from "../../validator/index.js";
 import { getRecentTradingDate } from "../../utils/date.js";
@@ -67,6 +68,18 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
       .optional()
       .describe(
         "Trading date in YYYYMMDD format (default: recent trading day)",
+      ),
+    date_from: z
+      .string()
+      .optional()
+      .describe(
+        "Start date for range query (YYYYMMDD). Use with date_to for multi-day data.",
+      ),
+    date_to: z
+      .string()
+      .optional()
+      .describe(
+        "End date for range query (YYYYMMDD). Use with date_from for multi-day data.",
       ),
     isuCd: z
       .string()
@@ -136,6 +149,70 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         return errorResult(`Unknown endpoint: ${shortName}`);
       }
 
+      const dateFrom = args.date_from as string | undefined;
+      const dateTo = args.date_to as string | undefined;
+      const isuCd = args.isuCd as string | undefined;
+
+      if ((dateFrom && !dateTo) || (!dateFrom && dateTo)) {
+        return errorResult(
+          "Both date_from and date_to must be provided together",
+        );
+      }
+
+      const isDateRange = dateFrom && dateTo;
+
+      if (isDateRange) {
+        try {
+          validateDate(dateFrom);
+          validateDate(dateTo);
+        } catch (err) {
+          return errorResult(
+            err instanceof Error ? err.message : "Invalid date format",
+          );
+        }
+
+        const extraParams: Record<string, string> = {};
+        if (isuCd) {
+          extraParams["isuCd"] = isuCd;
+        }
+
+        const rangeResult = await fetchDateRange({
+          endpoint: endpoint.path,
+          from: dateFrom,
+          to: dateTo,
+          apiKey,
+          extraParams,
+        });
+
+        if (!rangeResult.success) {
+          return errorResult(rangeResult.error ?? "Date range fetch failed");
+        }
+
+        let data: readonly Record<string, string>[] =
+          rangeResult.data as Record<string, string>[];
+
+        const sortField = args.sort as string | undefined;
+        const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
+        const limitN = args.limit as number | undefined;
+
+        data = applyPipeline(data, {
+          sort: sortField,
+          direction: sortDirection,
+          limit: limitN,
+        }) as Record<string, string>[];
+
+        const fields = args.fields as string[] | undefined;
+        if (fields) {
+          data = filterFields(data, fields);
+        }
+
+        return {
+          content: [
+            { type: "text" as const, text: JSON.stringify(data, null, 2) },
+          ],
+        };
+      }
+
       const dateStr =
         (args.date as string | undefined) ?? getRecentTradingDate();
 
@@ -147,7 +224,6 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         );
       }
 
-      const isuCd = args.isuCd as string | undefined;
       const params: Record<string, string> = { basDd: dateStr };
       if (isuCd) {
         params["isuCd"] = isuCd;

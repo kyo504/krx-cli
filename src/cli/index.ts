@@ -30,7 +30,9 @@ program
   .option("--sort <field>", "sort results by field name")
   .option("--asc", "sort ascending (default: descending)")
   .option("--limit <n>", "limit number of results", parseInt)
-  .option("--no-cache", "bypass cache and fetch fresh data");
+  .option("--no-cache", "bypass cache and fetch fresh data")
+  .option("--from <date>", "start date for range query (YYYYMMDD)")
+  .option("--to <date>", "end date for range query (YYYYMMDD)");
 
 registerAuthCommand(program);
 registerIndexCommand(program);
