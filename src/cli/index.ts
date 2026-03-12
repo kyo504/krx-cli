@@ -9,6 +9,7 @@ import { registerCommodityCommand } from "./commands/commodity.js";
 import { registerEsgCommand } from "./commands/esg.js";
 import { registerSchemaCommand } from "./commands/schema.js";
 import { registerCacheCommand } from "./commands/cache.js";
+import { registerMarketCommand } from "./commands/market.js";
 import { registerVersionCommand, getVersion } from "./commands/version.js";
 import { registerUpdateCommand } from "./commands/update.js";
 import { writeError } from "../output/formatter.js";
@@ -44,6 +45,7 @@ registerCommodityCommand(program);
 registerEsgCommand(program);
 registerSchemaCommand(program);
 registerCacheCommand(program);
+registerMarketCommand(program);
 registerVersionCommand(program);
 registerUpdateCommand(program);
 

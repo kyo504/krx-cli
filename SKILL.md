@@ -118,6 +118,29 @@ krx esg list --date 20260310 --type etp          # ESG ETP
 krx esg list --date 20260310 --type sri-bond     # SRI bonds
 ```
 
+### Stock Search (종목 검색)
+
+```bash
+krx stock search 삼성전자     # Search by name (KOSPI + KOSDAQ)
+krx stock search SK           # Partial match
+```
+
+### Market Summary (시장 요약)
+
+```bash
+krx market summary                    # Today's market overview
+krx market summary --date 20260310    # Specific date
+```
+
+Returns: KOSPI/KOSDAQ indices, top 5 gainers/losers, advancing/declining/unchanged counts, total volume/value.
+
+### Cache Management
+
+```bash
+krx cache status    # Show cache size, files, dates
+krx cache clear     # Clear all cached data
+```
+
 ### Schema (introspection)
 
 ```bash
@@ -130,6 +153,13 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 ```
 --output, -o <format>    json (default) | table | ndjson
 --fields, -f <fields>    Filter output fields: --fields ISU_NM,TDD_CLSPRC,FLUC_RT
+--code <isuCd>           Filter by stock code (ISU_CD)
+--sort <field>           Sort results by field name
+--asc                    Sort ascending (default: descending)
+--limit <n>              Limit number of results
+--from <date>            Start date for range query (YYYYMMDD)
+--to <date>              End date for range query (YYYYMMDD)
+--no-cache               Bypass cache and fetch fresh data
 --dry-run                Show request details without calling API
 --verbose, -v            Verbose logging to stderr
 ```
@@ -154,10 +184,29 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 krx index list --date 20260310 --market kospi --fields IDX_NM,CLSPRC_IDX,FLUC_RT
 ```
 
-### Get Samsung Electronics stock price
+### Get Samsung Electronics stock price (by search)
 
 ```bash
-krx stock list --date 20260310 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT | jq '.[] | select(.ISU_NM == "삼성전자")'
+krx stock search 삼성전자     # Find ISU_CD first
+krx stock list --date 20260310 --market kospi --code KR7005930003
+```
+
+### Top 5 gainers
+
+```bash
+krx stock list --date 20260310 --market kospi --sort FLUC_RT --limit 5 --fields ISU_NM,TDD_CLSPRC,FLUC_RT
+```
+
+### Date range query (multi-day)
+
+```bash
+krx index list --market kospi --from 20260301 --to 20260310 --fields IDX_NM,BAS_DD,CLSPRC_IDX
+```
+
+### Quick market overview
+
+```bash
+krx market summary --date 20260310
 ```
 
 ### Check API availability before querying
