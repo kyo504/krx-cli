@@ -1,9 +1,13 @@
+import { getCached, setCached } from "../cache/store.js";
+import { checkRateLimit, incrementCallCount } from "./rate-limit.js";
+
 export const BASE_URL = "https://data-dbg.krx.co.kr";
 
 export interface KrxRequestOptions {
   readonly endpoint: string;
   readonly params: Record<string, string>;
   readonly apiKey: string;
+  readonly cache?: boolean;
 }
 
 export interface KrxResponse<T = Record<string, string>> {
@@ -21,8 +25,15 @@ interface KrxErrorBody {
 export async function krxFetch<T = Record<string, string>>(
   options: KrxRequestOptions,
 ): Promise<KrxResponse<T>> {
-  const { checkRateLimit, incrementCallCount } =
-    await import("./rate-limit.js");
+  const useCache = options.cache !== false;
+
+  if (useCache) {
+    const cached = getCached<T>(options.endpoint, options.params);
+    if (cached) {
+      return { success: true, data: cached };
+    }
+  }
+
   const rateStatus = checkRateLimit();
 
   if (!rateStatus.allowed) {
@@ -84,6 +95,10 @@ export async function krxFetch<T = Record<string, string>>(
       data: [],
       error: "Unexpected response format: missing OutBlock_1",
     };
+  }
+
+  if (useCache) {
+    setCached(options.endpoint, options.params, outBlock as T[]);
   }
 
   return {

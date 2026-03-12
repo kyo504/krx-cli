@@ -8,6 +8,7 @@ import { registerDerivativeCommand } from "./commands/derivative.js";
 import { registerCommodityCommand } from "./commands/commodity.js";
 import { registerEsgCommand } from "./commands/esg.js";
 import { registerSchemaCommand } from "./commands/schema.js";
+import { registerCacheCommand } from "./commands/cache.js";
 import { registerVersionCommand, getVersion } from "./commands/version.js";
 import { registerUpdateCommand } from "./commands/update.js";
 import { writeError } from "../output/formatter.js";
@@ -28,7 +29,8 @@ program
   .option("--code <isuCd>", "filter by stock code (ISU_CD)")
   .option("--sort <field>", "sort results by field name")
   .option("--asc", "sort ascending (default: descending)")
-  .option("--limit <n>", "limit number of results", parseInt);
+  .option("--limit <n>", "limit number of results", parseInt)
+  .option("--no-cache", "bypass cache and fetch fresh data");
 
 registerAuthCommand(program);
 registerIndexCommand(program);
@@ -39,6 +41,7 @@ registerDerivativeCommand(program);
 registerCommodityCommand(program);
 registerEsgCommand(program);
 registerSchemaCommand(program);
+registerCacheCommand(program);
 registerVersionCommand(program);
 registerUpdateCommand(program);
 

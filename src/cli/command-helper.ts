@@ -57,6 +57,7 @@ export async function executeCommand(
     endpoint,
     params: finalParams,
     apiKey,
+    cache: parentOpts.cache as boolean,
   });
 
   if (!result.success) {

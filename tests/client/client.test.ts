@@ -20,6 +20,7 @@ describe("krxFetch", () => {
       endpoint: "/svc/apis/idx/kospi_dd_trd",
       params: { basDd: "20240105" },
       apiKey: "test-key",
+      cache: false,
     });
 
     expect(fetch).toHaveBeenCalledWith(
@@ -59,6 +60,7 @@ describe("krxFetch", () => {
       endpoint: "/svc/apis/idx/kospi_dd_trd",
       params: { basDd: "20240105" },
       apiKey: "bad-key",
+      cache: false,
     });
 
     expect(result.success).toBe(false);
@@ -84,6 +86,7 @@ describe("krxFetch", () => {
       endpoint: "/svc/apis/esg/esg_index_info",
       params: { basDd: "20240105" },
       apiKey: "test-key",
+      cache: false,
     });
 
     expect(result.success).toBe(false);
@@ -104,6 +107,7 @@ describe("krxFetch", () => {
       endpoint: "/svc/apis/idx/kospi_dd_trd",
       params: { basDd: "20240105" },
       apiKey: "test-key",
+      cache: false,
     });
 
     expect(result.success).toBe(false);
@@ -127,6 +131,7 @@ describe("krxFetch", () => {
       endpoint: "/svc/apis/idx/kospi_dd_trd",
       params: { basDd: "20240105" },
       apiKey: "test-key",
+      cache: false,
     });
 
     expect(result.data).toEqual([]);
