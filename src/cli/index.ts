@@ -34,7 +34,8 @@ program
   .option("--limit <n>", "limit number of results", parseInt)
   .option("--no-cache", "bypass cache and fetch fresh data")
   .option("--from <date>", "start date for range query (YYYYMMDD)")
-  .option("--to <date>", "end date for range query (YYYYMMDD)");
+  .option("--to <date>", "end date for range query (YYYYMMDD)")
+  .option("--filter <expression>", 'filter results (e.g. "FLUC_RT > 5")');
 
 registerAuthCommand(program);
 registerIndexCommand(program);

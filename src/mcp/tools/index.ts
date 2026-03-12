@@ -91,6 +91,12 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
       .optional()
       .describe("Sort direction (default: desc)"),
     limit: z.number().optional().describe("Limit number of results returned"),
+    filter: z
+      .string()
+      .optional()
+      .describe(
+        'Filter expression (e.g. "FLUC_RT > 5", "MKT_NM == KOSPI"). Operators: >, <, >=, <=, ==, !=',
+      ),
     fields: z
       .array(z.string())
       .optional()
@@ -191,11 +197,13 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         let data: readonly Record<string, string>[] =
           rangeResult.data as Record<string, string>[];
 
+        const filterExpr = args.filter as string | undefined;
         const sortField = args.sort as string | undefined;
         const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
         const limitN = args.limit as number | undefined;
 
         data = applyPipeline(data, {
+          filter: filterExpr,
           sort: sortField,
           direction: sortDirection,
           limit: limitN,
@@ -239,6 +247,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         return errorResult(result.error ?? "API request failed");
       }
 
+      const filterExpr2 = args.filter as string | undefined;
       const sortField = args.sort as string | undefined;
       const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
       const limitN = args.limit as number | undefined;
@@ -246,6 +255,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
       let data: readonly Record<string, string>[] = result.data;
 
       data = applyPipeline(data, {
+        filter: filterExpr2,
         sort: sortField,
         direction: sortDirection,
         limit: limitN,

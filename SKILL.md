@@ -171,6 +171,7 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 --from <date>            Start date for range query (YYYYMMDD)
 --to <date>              End date for range query (YYYYMMDD)
 --no-cache               Bypass cache and fetch fresh data
+--filter <expression>    Filter results (e.g. "FLUC_RT > 5", "MKT_NM == KOSPI")
 --dry-run                Show request details without calling API
 --verbose, -v            Verbose logging to stderr
 ```

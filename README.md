@@ -162,19 +162,20 @@ krx schema stock.stk_bydd_trd
 
 ## 글로벌 옵션
 
-| 옵션                    | 설명                           | 기본값                         |
-| ----------------------- | ------------------------------ | ------------------------------ |
-| `-o, --output <format>` | 출력 형식: json, table, ndjson | json (파이프) / table (터미널) |
-| `-f, --fields <fields>` | 출력 필드 필터 (쉼표 구분)     | 전체                           |
-| `--code <isuCd>`        | 종목코드 필터 (ISU_CD)         | -                              |
-| `--sort <field>`        | 결과 정렬 기준 필드            | -                              |
-| `--asc`                 | 오름차순 정렬 (기본: 내림차순) | -                              |
-| `--limit <n>`           | 결과 개수 제한                 | -                              |
-| `--from <date>`         | 기간 조회 시작일 (YYYYMMDD)    | -                              |
-| `--to <date>`           | 기간 조회 종료일 (YYYYMMDD)    | -                              |
-| `--no-cache`            | 캐시 무시하고 새로 조회        | -                              |
-| `--dry-run`             | API 호출 없이 요청 내용 출력   | -                              |
-| `-v, --verbose`         | 상세 로그 (stderr)             | -                              |
+| 옵션                    | 설명                            | 기본값                         |
+| ----------------------- | ------------------------------- | ------------------------------ |
+| `-o, --output <format>` | 출력 형식: json, table, ndjson  | json (파이프) / table (터미널) |
+| `-f, --fields <fields>` | 출력 필드 필터 (쉼표 구분)      | 전체                           |
+| `--code <isuCd>`        | 종목코드 필터 (ISU_CD)          | -                              |
+| `--sort <field>`        | 결과 정렬 기준 필드             | -                              |
+| `--asc`                 | 오름차순 정렬 (기본: 내림차순)  | -                              |
+| `--limit <n>`           | 결과 개수 제한                  | -                              |
+| `--from <date>`         | 기간 조회 시작일 (YYYYMMDD)     | -                              |
+| `--to <date>`           | 기간 조회 종료일 (YYYYMMDD)     | -                              |
+| `--no-cache`            | 캐시 무시하고 새로 조회         | -                              |
+| `--filter <expression>` | 필터 표현식 (예: "FLUC_RT > 5") | -                              |
+| `--dry-run`             | API 호출 없이 요청 내용 출력    | -                              |
+| `-v, --verbose`         | 상세 로그 (stderr)              | -                              |
 
 ## Exit Codes
 

@@ -1,12 +1,7 @@
-export function parseKrxNumber(value: string): number {
-  const cleaned = value.replace(/,/g, "");
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? 0 : num;
-}
+import { filterData } from "./filter.js";
+import { parseKrxNumber, isKrxNumericString } from "./krx-number.js";
 
-function isNumericString(value: string): boolean {
-  return /^-?[\d,]+\.?\d*$/.test(value.trim());
-}
+export { parseKrxNumber };
 
 export function sortData(
   data: readonly Record<string, unknown>[],
@@ -17,7 +12,7 @@ export function sortData(
     const aVal = String(a[field] ?? "");
     const bVal = String(b[field] ?? "");
 
-    if (isNumericString(aVal) && isNumericString(bVal)) {
+    if (isKrxNumericString(aVal) && isKrxNumericString(bVal)) {
       return parseKrxNumber(aVal) - parseKrxNumber(bVal);
     }
 
@@ -35,6 +30,7 @@ export function limitData(
 }
 
 interface PipelineOptions {
+  readonly filter?: string;
   readonly sort?: string;
   readonly direction?: "asc" | "desc";
   readonly limit?: number;
@@ -45,6 +41,10 @@ export function applyPipeline(
   options: PipelineOptions,
 ): readonly Record<string, unknown>[] {
   let result = data;
+
+  if (options.filter) {
+    result = filterData(result, options.filter);
+  }
 
   if (options.sort) {
     result = sortData(result, options.sort, options.direction ?? "desc");

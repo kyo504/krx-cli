@@ -133,10 +133,20 @@ export async function executeCommand(
   }
 
   data = applyPipeline(data, {
+    filter: parentOpts.filter as string | undefined,
     sort: parentOpts.sort as string | undefined,
     direction: parentOpts.asc ? "asc" : "desc",
     limit: parentOpts.limit as number | undefined,
   }) as Record<string, unknown>[];
+
+  if (data.length === 0) {
+    writeError(
+      parentOpts.filter
+        ? `No results matched filter: ${parentOpts.filter as string}`
+        : (noDataMessage ?? "No data"),
+    );
+    process.exit(EXIT_CODES.NO_DATA);
+  }
 
   const format = detectOutputFormat(parentOpts.output);
   const fields = parentOpts.fields?.split(",");
