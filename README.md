@@ -118,6 +118,13 @@ krx cache status    # 캐시 현황 조회
 krx cache clear     # 캐시 전체 삭제
 ```
 
+### 버전 관리
+
+```bash
+krx version    # 현재 버전 확인 및 최신 버전 비교
+krx update     # 최신 버전으로 업데이트
+```
+
 ### ETF/ETN/ELW 조회
 
 ```bash
@@ -137,6 +144,10 @@ krx bond list --date 20260310 --market general
 ```bash
 krx derivative list --date 20260310 --type futures
 krx derivative list --date 20260310 --type options
+krx derivative list --date 20260310 --type futures-kospi
+krx derivative list --date 20260310 --type futures-kosdaq
+krx derivative list --date 20260310 --type options-kospi
+krx derivative list --date 20260310 --type options-kosdaq
 ```
 
 ### 일반상품 조회
@@ -373,6 +384,7 @@ MCP 클라이언트에서 자연어로 요청하면 됩니다:
 pnpm install
 pnpm build
 pnpm test
+pnpm test:e2e
 pnpm typecheck
 pnpm lint
 ```

@@ -152,6 +152,13 @@ krx cache status    # Show cache size, files, dates
 krx cache clear     # Clear all cached data
 ```
 
+### Version & Update
+
+```bash
+krx version    # Show current version and check for updates
+krx update     # Update to the latest version (npm install -g krx-cli)
+```
+
 ### Schema (introspection)
 
 ```bash

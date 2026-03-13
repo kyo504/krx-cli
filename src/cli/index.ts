@@ -24,7 +24,7 @@ program
   .name("krx")
   .description("Agent-native CLI for KRX (Korea Exchange) Open API")
   .version(getVersion())
-  .option("-o, --output <format>", "output format: json, table, ndjson")
+  .option("-o, --output <format>", "output format: json, table, ndjson, csv")
   .option("-f, --fields <fields>", "comma-separated fields to include")
   .option("--dry-run", "show request without calling API")
   .option("-v, --verbose", "verbose output to stderr")
