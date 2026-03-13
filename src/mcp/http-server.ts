@@ -54,7 +54,10 @@ export function startHttpServer(
     }
   }
 
+  const originalWarn = console.warn;
+  console.warn = () => {};
   const app = createMcpExpressApp({ host });
+  console.warn = originalWarn;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.get("/health", (_req: any, res: any) => {
