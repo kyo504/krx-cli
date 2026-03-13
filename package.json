@@ -19,6 +19,7 @@
     "lint": "eslint src/",
     "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'",
     "typecheck": "tsc --noEmit",
+    "test:e2e": "vitest run --config tests/vitest.config.e2e.ts",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "prepare": "husky"
   },
