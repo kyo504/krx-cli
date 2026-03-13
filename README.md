@@ -291,16 +291,19 @@ mkdir -p ~/.claude/skills && cp SKILL.md ~/.claude/skills/krx-cli.md
 mkdir -p ~/.cursor/skills && cp SKILL.md ~/.cursor/skills/krx-cli.md
 ```
 
-## MCP 서버 (Claude Desktop / ChatGPT Desktop)
+## MCP 서버
 
-CLI 외에 MCP(Model Context Protocol) 서버도 제공합니다. Claude Desktop, ChatGPT Desktop 등 MCP를 지원하는 클라이언트에서 사용할 수 있습니다.
+CLI 외에 MCP(Model Context Protocol) 서버도 제공합니다. 두 가지 전송 방식을 지원합니다:
 
-### 설정 (Claude Desktop)
+| 전송 방식       | 바이너리    | 지원 클라이언트 |
+| --------------- | ----------- | --------------- |
+| stdio           | `krx-mcp`   | Claude Desktop  |
+| Streamable HTTP | `krx serve` | ChatGPT 웹      |
 
 API 키는 `krx auth set <key>`로 등록한 것이 자동으로 사용됩니다.
 `krx-mcp`는 `npm install -g krx-cli`로 설치하면 함께 설치됩니다.
 
-### Claude Desktop
+### Claude Desktop (stdio)
 
 설정 파일 위치:
 
@@ -317,24 +320,25 @@ API 키는 `krx auth set <key>`로 등록한 것이 자동으로 사용됩니다
 }
 ```
 
-### ChatGPT Desktop
+설정 후 앱을 재시작하면 MCP 도구가 활성화됩니다.
 
-설정 파일 위치:
+### ChatGPT 웹 (Streamable HTTP)
 
-- **macOS**: `~/Library/Application Support/com.openai.chat/mcp.json`
-- **Windows**: `%LOCALAPPDATA%\OpenAI\ChatGPT\mcp.json`
+ChatGPT 웹은 원격 MCP 서버만 지원하므로, HTTP 서버를 실행한 뒤 ngrok으로 외부에 노출해야 합니다.
 
-```json
-{
-  "mcpServers": {
-    "krx": {
-      "command": "krx-mcp"
-    }
-  }
-}
+```bash
+# 터미널 1: MCP 서버 실행
+krx serve --port 3000 --host 0.0.0.0
+
+# 터미널 2: ngrok으로 외부 노출
+ngrok http 3000
 ```
 
-설정 후 앱을 재시작하면 MCP 도구가 활성화됩니다.
+1. ngrok 출력에서 `https://xxxx.ngrok.io` URL 복사
+2. ChatGPT 웹 → Settings → Developer → MCP Server 추가
+3. URL: `https://xxxx.ngrok.io/mcp`
+
+Health check: `http://localhost:3000/health`
 
 ### 제공 Tool
 

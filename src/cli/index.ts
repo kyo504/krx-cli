@@ -13,6 +13,7 @@ import { registerMarketCommand } from "./commands/market.js";
 import { registerWatchlistCommand } from "./commands/watchlist.js";
 import { registerVersionCommand, getVersion } from "./commands/version.js";
 import { registerUpdateCommand } from "./commands/update.js";
+import { registerServeCommand } from "./commands/serve.js";
 import { writeError } from "../output/formatter.js";
 import { EXIT_CODES } from "./exit-codes.js";
 
@@ -57,6 +58,7 @@ registerMarketCommand(program);
 registerWatchlistCommand(program);
 registerVersionCommand(program);
 registerUpdateCommand(program);
+registerServeCommand(program);
 
 program.exitOverride();
 

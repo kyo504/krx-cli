@@ -159,6 +159,14 @@ krx version    # Show current version and check for updates
 krx update     # Update to the latest version (npm install -g krx-cli)
 ```
 
+### MCP HTTP Server
+
+```bash
+krx serve                        # Start on http://127.0.0.1:3000/mcp
+krx serve --port 8080            # Custom port
+krx serve --host 0.0.0.0        # Bind to all interfaces (for ngrok)
+```
+
 ### Schema (introspection)
 
 ```bash
