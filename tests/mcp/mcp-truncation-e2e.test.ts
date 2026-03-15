@@ -247,4 +247,28 @@ describe("MCP 통합 테스트: truncation 시나리오", () => {
     const uniqueIds = new Set(collected.map((r) => r.ISU_CD));
     expect(uniqueIds.size).toBe(TOTAL_ROWS);
   });
+
+  it("isuCd로 특정 종목 조회 → 1건만 반환", async () => {
+    handle = await startHttpServer({ port: 0, host: HOST });
+    client = await createMcpClient(handle.port);
+
+    const targetIsuCd = FULL_DATA[42]!.ISU_CD;
+
+    const result = await client.callTool({
+      name: "krx_stock",
+      arguments: {
+        endpoint: "stk_bydd_trd",
+        date: "20260310",
+        isuCd: targetIsuCd,
+      },
+    });
+
+    const text = (result.content as { type: string; text: string }[])[0]!.text;
+    const parsed = JSON.parse(text) as Record<string, string>[];
+
+    expect(Array.isArray(parsed)).toBe(true);
+    expect(parsed.length).toBe(1);
+    expect(parsed[0]!.ISU_CD).toBe(targetIsuCd);
+    expect(parsed[0]!.ISU_NM).toBe("테스트종목_0042");
+  });
 });

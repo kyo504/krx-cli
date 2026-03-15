@@ -37,9 +37,11 @@ export async function executeCommand(
 
   const parentOpts = program.opts();
 
-  const finalParams = parentOpts.code
-    ? { ...params, isuCd: parentOpts.code as string }
-    : params;
+  // isuCd is NOT sent to the API — KRX endpoints ignore it and return all rows.
+  // Filtering is done client-side after fetch, which also avoids cache key duplication.
+  const finalParams = params;
+
+  const codeFilter = parentOpts.code as string | undefined;
 
   if (parentOpts.dryRun) {
     writeOutput(
@@ -48,6 +50,7 @@ export async function executeCommand(
           method: "POST",
           endpoint,
           params: finalParams,
+          clientFilter: codeFilter ? { ISU_CD: codeFilter } : undefined,
           headers: { AUTH_KEY: "***" },
         },
         null,
@@ -128,6 +131,10 @@ export async function executeCommand(
     }
 
     data = result.data as unknown as Record<string, unknown>[];
+  }
+
+  if (codeFilter) {
+    data = data.filter((row) => row["ISU_CD"] === codeFilter);
   }
 
   if (data.length === 0) {

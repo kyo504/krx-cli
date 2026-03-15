@@ -175,17 +175,12 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
           );
         }
 
-        const extraParams: Record<string, string> = {};
-        if (isuCd) {
-          extraParams["isuCd"] = isuCd;
-        }
-
+        // isuCd omitted from API params — see comment in single-date path above
         const rangeResult = await fetchDateRange({
           endpoint: endpoint.path,
           from: dateFrom,
           to: dateTo,
           apiKey,
-          extraParams,
         });
 
         if (!rangeResult.success) {
@@ -194,6 +189,10 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
 
         let data: readonly Record<string, string>[] =
           rangeResult.data as Record<string, string>[];
+
+        if (isuCd) {
+          data = data.filter((row) => row["ISU_CD"] === isuCd);
+        }
 
         const filterExpr = args.filter as string | undefined;
         const sortField = args.sort as string | undefined;
@@ -228,10 +227,10 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         );
       }
 
+      // isuCd is NOT passed to the API — KRX endpoints ignore it and return
+      // all rows regardless. Client-side filtering is applied after fetch.
+      // This also ensures a single cache entry per date (no isuCd in cache key).
       const params: Record<string, string> = { basDd: dateStr };
-      if (isuCd) {
-        params["isuCd"] = isuCd;
-      }
 
       const result = await krxFetch({
         endpoint: endpoint.path,
@@ -250,6 +249,10 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
       const limitN = args.limit as number | undefined;
 
       let data: readonly Record<string, string>[] = result.data;
+
+      if (isuCd) {
+        data = data.filter((row) => row["ISU_CD"] === isuCd);
+      }
 
       data = applyPipeline(data, {
         filter: filterExpr2,
