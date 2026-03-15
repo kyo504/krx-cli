@@ -7,7 +7,7 @@ install: npm install -g krx-cli
 binary: krx
 metadata:
   author: kyo504
-  version: "1.7.2"
+  version: "1.7.3"
 invariants:
   - Always use YYYYMMDD format for --date (e.g., 20260310)
   - Data is T-1 (previous trading day), available from 2010 onwards
