@@ -51,7 +51,7 @@ export function applyPipeline(
     result = sortData(result, options.sort, options.direction ?? "desc");
   }
 
-  if (options.offset && options.offset > 0) {
+  if (options.offset !== undefined && options.offset > 0) {
     result = result.slice(options.offset);
   }
 

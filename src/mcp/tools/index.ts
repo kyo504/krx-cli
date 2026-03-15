@@ -55,7 +55,8 @@ Notes:
 - Data is T-1 (previous trading day)
 - All response values are strings
 - Rate limit: 10,000 calls/day
-- IMPORTANT: Full market listings can exceed the 1MB result limit. Use 'fields' to select only needed columns, or 'limit'+'offset' for pagination. If the response contains '_truncated', follow its instructions to retrieve remaining data.`;
+- IMPORTANT: When querying a specific stock, ALWAYS pass 'isuCd' to filter. Without it, all stocks in the market are returned.
+- Full market listings can exceed the result size limit. Use 'fields' to select only needed columns, or 'limit'+'offset' for pagination. If the response contains '_truncated', follow its instructions to retrieve remaining data.`;
 }
 
 function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {

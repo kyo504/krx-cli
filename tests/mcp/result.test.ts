@@ -34,7 +34,7 @@ describe("successResult", () => {
     expect(parsed._truncated.returned).toBeLessThan(200);
     expect(parsed.data.length).toBe(parsed._truncated.returned);
     expect(Buffer.byteLength(result.content[0]!.text, "utf-8")).toBeLessThan(
-      1_000_000,
+      500_000,
     );
   });
 });

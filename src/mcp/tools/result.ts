@@ -1,4 +1,4 @@
-const MAX_RESULT_BYTES = 900_000; // 900KB (1MB 제한에 여유 확보)
+const MAX_RESULT_BYTES = 500_000; // 500KB (플랫폼별 컨텍스트 제한에 여유 확보)
 
 interface ToolResult {
   readonly content: { type: "text"; text: string }[];
@@ -21,7 +21,7 @@ export function successResult(
   while (lo < hi) {
     const mid = Math.ceil((lo + hi) / 2);
     const candidate = JSON.stringify(data.slice(0, mid), null, 2);
-    if (Buffer.byteLength(candidate, "utf-8") <= MAX_RESULT_BYTES - 200) {
+    if (Buffer.byteLength(candidate, "utf-8") <= MAX_RESULT_BYTES - 2_000) {
       lo = mid;
     } else {
       hi = mid - 1;
