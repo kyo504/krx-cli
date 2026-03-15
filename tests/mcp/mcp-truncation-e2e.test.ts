@@ -36,9 +36,11 @@ const mockedKrxFetch = vi.mocked(krxFetch);
 
 function generateLargeStockData(count: number): Record<string, string>[] {
   return Array.from({ length: count }, (_, i) => {
+    const shortCode = String(i).padStart(6, "0");
     const row: Record<string, string> = {
       BAS_DD: "20260310",
-      ISU_CD: `KR700${String(i).padStart(4, "0")}0`,
+      ISU_CD: shortCode,
+      ISU_SRT_CD: shortCode,
       ISU_NM: `테스트종목_${String(i).padStart(4, "0")}`,
       MKT_NM: "KOSPI",
       TDD_CLSPRC: String(10000 + i * 100),
@@ -248,10 +250,35 @@ describe("MCP 통합 테스트: truncation 시나리오", () => {
     expect(uniqueIds.size).toBe(TOTAL_ROWS);
   });
 
-  it("isuCd로 특정 종목 조회 → 1건만 반환", async () => {
+  it("단축코드(ISU_SRT_CD)로 특정 종목 조회 → 1건만 반환", async () => {
     handle = await startHttpServer({ port: 0, host: HOST });
     client = await createMcpClient(handle.port);
 
+    const targetShortCode = FULL_DATA[42]!.ISU_SRT_CD;
+
+    const result = await client.callTool({
+      name: "krx_stock",
+      arguments: {
+        endpoint: "stk_bydd_trd",
+        date: "20260310",
+        isuCd: targetShortCode,
+      },
+    });
+
+    const text = (result.content as { type: string; text: string }[])[0]!.text;
+    const parsed = JSON.parse(text) as Record<string, string>[];
+
+    expect(Array.isArray(parsed)).toBe(true);
+    expect(parsed.length).toBe(1);
+    expect(parsed[0]!.ISU_SRT_CD).toBe(targetShortCode);
+    expect(parsed[0]!.ISU_NM).toBe("테스트종목_0042");
+  });
+
+  it("ISIN코드로 특정 종목 조회 → ISU_CD 매칭으로 1건 반환", async () => {
+    handle = await startHttpServer({ port: 0, host: HOST });
+    client = await createMcpClient(handle.port);
+
+    // ISU_CD가 단축코드인 데이터에 ISIN 코드로 검색해도 ISU_CD 매칭으로 찾아야 함
     const targetIsuCd = FULL_DATA[42]!.ISU_CD;
 
     const result = await client.callTool({

@@ -12,6 +12,7 @@ import { validateDate } from "../../validator/index.js";
 import { getRecentTradingDate } from "../../utils/date.js";
 import { applyPipeline } from "../../utils/data-pipeline.js";
 import { successResult, errorResult } from "./result.js";
+import { matchesIsuCode } from "../../utils/isin.js";
 
 type ZodRawShape = Record<string, z.ZodType>;
 
@@ -87,7 +88,9 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
     isuCd: z
       .string()
       .optional()
-      .describe("Stock/item code (ISU_CD) to filter a specific item"),
+      .describe(
+        "Stock/item code to filter. Accepts both ISIN (e.g., KR7005930003) and short code (e.g., 005930).",
+      ),
     sort: z.string().optional().describe("Sort results by this field name"),
     sort_direction: z
       .enum(["asc", "desc"])
@@ -191,7 +194,9 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
           rangeResult.data as Record<string, string>[];
 
         if (isuCd) {
-          data = data.filter((row) => row["ISU_CD"] === isuCd);
+          data = data.filter((row) =>
+            matchesIsuCode(row["ISU_CD"] ?? "", row["ISU_SRT_CD"] ?? "", isuCd),
+          );
         }
 
         const filterExpr = args.filter as string | undefined;
@@ -251,7 +256,9 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
       let data: readonly Record<string, string>[] = result.data;
 
       if (isuCd) {
-        data = data.filter((row) => row["ISU_CD"] === isuCd);
+        data = data.filter((row) =>
+          matchesIsuCode(row["ISU_CD"] ?? "", row["ISU_SRT_CD"] ?? "", isuCd),
+        );
       }
 
       data = applyPipeline(data, {

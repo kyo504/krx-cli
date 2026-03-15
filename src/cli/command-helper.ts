@@ -13,6 +13,7 @@ import {
 import { EXIT_CODES } from "./exit-codes.js";
 import { handleKrxError } from "./error-handler.js";
 import { applyPipeline } from "../utils/data-pipeline.js";
+import { matchesIsuCode } from "../utils/isin.js";
 import { validateDate } from "../validator/index.js";
 
 interface ExecuteCommandOptions {
@@ -134,7 +135,13 @@ export async function executeCommand(
   }
 
   if (codeFilter) {
-    data = data.filter((row) => row["ISU_CD"] === codeFilter);
+    data = data.filter((row) =>
+      matchesIsuCode(
+        String(row["ISU_CD"] ?? ""),
+        String(row["ISU_SRT_CD"] ?? ""),
+        codeFilter,
+      ),
+    );
   }
 
   if (data.length === 0) {
