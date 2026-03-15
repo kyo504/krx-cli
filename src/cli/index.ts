@@ -32,6 +32,11 @@ program
   .option("--code <isuCd>", "filter by stock code (ISU_CD)")
   .option("--sort <field>", "sort results by field name")
   .option("--asc", "sort ascending (default: descending)")
+  .option(
+    "--offset <n>",
+    "skip first N results (for pagination)",
+    (v: string) => Number(v),
+  )
   .option("--limit <n>", "limit number of results", parseInt)
   .option("--no-cache", "bypass cache and fetch fresh data")
   .option("--from <date>", "start date for range query (YYYYMMDD)")

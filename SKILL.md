@@ -182,6 +182,7 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 --code <isuCd>           Filter by stock code (ISU_CD)
 --sort <field>           Sort results by field name
 --asc                    Sort ascending (default: descending)
+--offset <n>             Skip first N results (for pagination)
 --limit <n>              Limit number of results
 --from <date>            Start date for range query (YYYYMMDD)
 --to <date>              End date for range query (YYYYMMDD)
@@ -204,6 +205,39 @@ krx schema index.kospi_dd_trd # Specific endpoint schema
 5 = Rate limit exceeded (10,000/day)
 6 = Service not approved (category not activated)
 ```
+
+## Handling Large Results
+
+Full market listings (e.g., all KOSPI stocks) output 900+ rows with 15+ fields each. This can exceed context limits. Always narrow results using these strategies:
+
+### Strategy 1: Select only needed fields (preferred)
+
+```bash
+# Instead of all fields, select only what's needed
+krx stock list --date 20260310 --market kospi --fields ISU_NM,TDD_CLSPRC,FLUC_RT
+```
+
+### Strategy 2: Paginate with offset + limit
+
+```bash
+# Page 1: first 100 rows
+krx stock list --date 20260310 --market kospi --limit 100
+
+# Page 2: next 100 rows
+krx stock list --date 20260310 --market kospi --offset 100 --limit 100
+
+# Page 3: next 100 rows
+krx stock list --date 20260310 --market kospi --offset 200 --limit 100
+```
+
+### Strategy 3: Filter to relevant subset
+
+```bash
+# Only stocks with >5% change
+krx stock list --date 20260310 --market kospi --filter "FLUC_RT > 5"
+```
+
+IMPORTANT: When the user asks for "all" data, prefer Strategy 1 (fields) first. If still too large, combine with Strategy 2 (pagination). Always tell the user the total count.
 
 ## Common Patterns
 

@@ -180,6 +180,7 @@ krx schema stock.stk_bydd_trd
 | `--code <isuCd>`        | 종목코드 필터 (ISU_CD)              | -                              |
 | `--sort <field>`        | 결과 정렬 기준 필드                 | -                              |
 | `--asc`                 | 오름차순 정렬 (기본: 내림차순)      | -                              |
+| `--offset <n>`          | 처음 N개 건너뛰기 (페이지네이션)    | -                              |
 | `--limit <n>`           | 결과 개수 제한                      | -                              |
 | `--from <date>`         | 기간 조회 시작일 (YYYYMMDD)         | -                              |
 | `--to <date>`           | 기간 조회 종료일 (YYYYMMDD)         | -                              |

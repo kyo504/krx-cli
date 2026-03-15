@@ -11,6 +11,7 @@ import { getApiKey } from "../../client/auth.js";
 import { validateDate } from "../../validator/index.js";
 import { getRecentTradingDate } from "../../utils/date.js";
 import { applyPipeline } from "../../utils/data-pipeline.js";
+import { successResult, errorResult } from "./result.js";
 
 type ZodRawShape = Record<string, z.ZodType>;
 
@@ -53,7 +54,8 @@ Notes:
 - Date format: YYYYMMDD (e.g., 20260310)
 - Data is T-1 (previous trading day)
 - All response values are strings
-- Rate limit: 10,000 calls/day`;
+- Rate limit: 10,000 calls/day
+- IMPORTANT: Full market listings can exceed the 1MB result limit. Use 'fields' to select only needed columns, or 'limit'+'offset' for pagination. If the response contains '_truncated', follow its instructions to retrieve remaining data.`;
 }
 
 function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
@@ -90,6 +92,10 @@ function buildInputSchema(endpoints: readonly EndpointDef[]): ZodRawShape {
       .enum(["asc", "desc"])
       .optional()
       .describe("Sort direction (default: desc)"),
+    offset: z
+      .number()
+      .optional()
+      .describe("Skip first N results (use with limit for pagination)"),
     limit: z.number().optional().describe("Limit number of results returned"),
     filter: z
       .string()
@@ -121,15 +127,6 @@ function filterFields(
     }
     return filtered;
   });
-}
-
-function errorResult(message: string) {
-  return {
-    content: [
-      { type: "text" as const, text: JSON.stringify({ error: message }) },
-    ],
-    isError: true,
-  };
 }
 
 function createCategoryTool(categoryId: CategoryId): ToolDefinition {
@@ -200,12 +197,14 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         const filterExpr = args.filter as string | undefined;
         const sortField = args.sort as string | undefined;
         const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
+        const offsetN = args.offset as number | undefined;
         const limitN = args.limit as number | undefined;
 
         data = applyPipeline(data, {
           filter: filterExpr,
           sort: sortField,
           direction: sortDirection,
+          offset: offsetN,
           limit: limitN,
         }) as Record<string, string>[];
 
@@ -214,11 +213,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
           data = filterFields(data, fields);
         }
 
-        return {
-          content: [
-            { type: "text" as const, text: JSON.stringify(data, null, 2) },
-          ],
-        };
+        return successResult(data as Record<string, unknown>[]);
       }
 
       const dateStr =
@@ -250,6 +245,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
       const filterExpr2 = args.filter as string | undefined;
       const sortField = args.sort as string | undefined;
       const sortDirection = (args.sort_direction as "asc" | "desc") ?? "desc";
+      const offsetN = args.offset as number | undefined;
       const limitN = args.limit as number | undefined;
 
       let data: readonly Record<string, string>[] = result.data;
@@ -258,6 +254,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         filter: filterExpr2,
         sort: sortField,
         direction: sortDirection,
+        offset: offsetN,
         limit: limitN,
       }) as Record<string, string>[];
 
@@ -266,11 +263,7 @@ function createCategoryTool(categoryId: CategoryId): ToolDefinition {
         data = filterFields(data, fields);
       }
 
-      return {
-        content: [
-          { type: "text" as const, text: JSON.stringify(data, null, 2) },
-        ],
-      };
+      return successResult(data as Record<string, unknown>[]);
     },
   };
 }

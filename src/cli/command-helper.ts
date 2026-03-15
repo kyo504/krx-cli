@@ -139,6 +139,7 @@ export async function executeCommand(
     filter: parentOpts.filter as string | undefined,
     sort: parentOpts.sort as string | undefined,
     direction: parentOpts.asc ? "asc" : "desc",
+    offset: parentOpts.offset as number | undefined,
     limit: parentOpts.limit as number | undefined,
   }) as Record<string, unknown>[];
 

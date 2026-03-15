@@ -7,6 +7,7 @@ import { derivativeScenarios } from "./derivative.scenario.js";
 import { commodityScenarios } from "./commodity.scenario.js";
 import { esgScenarios } from "./esg.scenario.js";
 import { marketScenarios } from "./market.scenario.js";
+import { truncationScenarios } from "./truncation.scenario.js";
 
 export const allScenarios: readonly Scenario[] = [
   ...indexScenarios,
@@ -17,6 +18,7 @@ export const allScenarios: readonly Scenario[] = [
   ...commodityScenarios,
   ...esgScenarios,
   ...marketScenarios,
+  ...truncationScenarios,
 ];
 
 export function getScenariosByTag(tag: string): readonly Scenario[] {

@@ -33,6 +33,7 @@ interface PipelineOptions {
   readonly filter?: string;
   readonly sort?: string;
   readonly direction?: "asc" | "desc";
+  readonly offset?: number;
   readonly limit?: number;
 }
 
@@ -48,6 +49,10 @@ export function applyPipeline(
 
   if (options.sort) {
     result = sortData(result, options.sort, options.direction ?? "desc");
+  }
+
+  if (options.offset && options.offset > 0) {
+    result = result.slice(options.offset);
   }
 
   if (options.limit && options.limit > 0) {
