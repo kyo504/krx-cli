@@ -22,6 +22,8 @@ function isNetworkError(error: unknown): boolean {
   return false;
 }
 
+import { verbose } from "../utils/logger.js";
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -46,6 +48,9 @@ export async function withRetry<T>(
       }
 
       const waitMs = baseDelay * Math.pow(2, attempt);
+      verbose(
+        `retry ${attempt + 1}/${maxRetries} after ${waitMs}ms — ${err instanceof Error ? err.message : String(err)}`,
+      );
       await delay(waitMs);
     }
   }

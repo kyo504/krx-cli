@@ -1,6 +1,7 @@
 import { getCached, setCached } from "../cache/store.js";
 import { checkRateLimit, incrementCallCount } from "./rate-limit.js";
 import { withRetry } from "./retry.js";
+import { verbose } from "../utils/logger.js";
 
 export const BASE_URL = "https://data-dbg.krx.co.kr";
 
@@ -32,8 +33,10 @@ export async function krxFetch<T = Record<string, string>>(
   if (useCache) {
     const cached = getCached<T>(options.endpoint, options.params);
     if (cached) {
+      verbose(`cache hit — ${options.endpoint}`);
       return { success: true, data: cached };
     }
+    verbose(`cache miss — ${options.endpoint}`);
   }
 
   const rateStatus = checkRateLimit();
@@ -53,7 +56,15 @@ export async function krxFetch<T = Record<string, string>>(
     );
   }
 
+  verbose(
+    `rate limit: ${rateStatus.count}/${rateStatus.limit} calls used today`,
+  );
+
   const url = `${BASE_URL}${options.endpoint}`;
+
+  verbose(`POST ${url} ${JSON.stringify(options.params)}`);
+
+  const startTime = Date.now();
 
   const response = await withRetry(
     () =>
@@ -94,14 +105,19 @@ export async function krxFetch<T = Record<string, string>>(
 
   const body = (await response.json()) as Record<string, unknown>;
 
+  const elapsed = Date.now() - startTime;
+
   const outBlock = body["OutBlock_1"];
   if (!Array.isArray(outBlock)) {
+    verbose(`response: unexpected format (no OutBlock_1) in ${elapsed}ms`);
     return {
       success: false,
       data: [],
       error: "Unexpected response format: missing OutBlock_1",
     };
   }
+
+  verbose(`response: ${outBlock.length} rows in ${elapsed}ms`);
 
   if (useCache) {
     setCached(options.endpoint, options.params, outBlock as T[]);

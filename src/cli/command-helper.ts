@@ -15,6 +15,7 @@ import { handleKrxError } from "./error-handler.js";
 import { applyPipeline } from "../utils/data-pipeline.js";
 import { matchesIsuCode } from "../utils/isin.js";
 import { validateDate } from "../validator/index.js";
+import { setVerbose, verbose } from "../utils/logger.js";
 
 interface ExecuteCommandOptions {
   readonly endpoint: string;
@@ -37,6 +38,12 @@ export async function executeCommand(
   }
 
   const parentOpts = program.opts();
+
+  if (parentOpts.verbose) {
+    setVerbose(true);
+  }
+
+  verbose(`endpoint: ${endpoint}`);
 
   // isuCd is NOT sent to the API — KRX endpoints ignore it and return all rows.
   // Filtering is done client-side after fetch, which also avoids cache key duplication.
@@ -149,6 +156,8 @@ export async function executeCommand(
     process.exit(EXIT_CODES.NO_DATA);
   }
 
+  const beforePipeline = data.length;
+
   data = applyPipeline(data, {
     filter: parentOpts.filter as string | undefined,
     sort: parentOpts.sort as string | undefined,
@@ -156,6 +165,8 @@ export async function executeCommand(
     offset: parentOpts.offset as number | undefined,
     limit: parentOpts.limit as number | undefined,
   }) as Record<string, unknown>[];
+
+  verbose(`pipeline: ${beforePipeline} → ${data.length} rows`);
 
   if (data.length === 0) {
     writeError(

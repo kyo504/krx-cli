@@ -1,5 +1,6 @@
 import { krxFetch, type KrxResponse } from "./client.js";
 import { getTradingDays } from "../utils/date.js";
+import { verbose } from "../utils/logger.js";
 
 interface DateRangeOptions {
   readonly endpoint: string;
@@ -66,6 +67,8 @@ export async function fetchDateRange<T = Record<string, string>>(
   }
 
   const tradingDays = getTradingDays(from, to);
+
+  verbose(`date range: ${from}~${to} → ${tradingDays.length} trading days`);
 
   if (tradingDays.length === 0) {
     return { success: true, data: [], fetchedDays: 0, failedDays: 0 };
