@@ -25,6 +25,10 @@ Claude Code, GPT, Cursor 등의 AI 에이전트가 Bash tool 또는 MCP를 통�
 
 ```bash
 npm install -g krx-cli
+# 또는
+pnpm add -g krx-cli
+# 또는
+yarn global add krx-cli
 ```
 
 ## 설정
@@ -141,6 +145,7 @@ krx etp list --date 20260310 --type etn
 ```bash
 krx bond list --date 20260310 --market kts
 krx bond list --date 20260310 --market general
+krx bond list --date 20260310 --market small
 ```
 
 ### 파생상품 조회
@@ -159,6 +164,7 @@ krx derivative list --date 20260310 --type options-kosdaq
 ```bash
 krx commodity list --date 20260310 --type gold
 krx commodity list --date 20260310 --type oil
+krx commodity list --date 20260310 --type emission
 ```
 
 ### ESG 조회
@@ -218,6 +224,10 @@ krx-cli는 AI 에이전트가 Bash tool로 직접 호출하도록 설계되었�
 
 ```bash
 npm install -g krx-cli
+# 또는
+pnpm add -g krx-cli
+# 또는
+yarn global add krx-cli
 ```
 
 ### Step 2: 스킬 설치
