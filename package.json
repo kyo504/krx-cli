@@ -1,7 +1,7 @@
 {
   "name": "krx-cli",
   "version": "1.7.3",
-  "description": "Agent-native CLI for KRX (Korea Exchange) Open API",
+  "description": "CLI & MCP server for KRX (Korea Exchange) Open API — query Korean stock market data (KOSPI, KOSDAQ, ETF, bonds, derivatives) from terminal or AI agents",
   "type": "module",
   "bin": {
     "krx": "./dist/cli.js",
@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "SKILL.md"
+    "SKILL.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "node esbuild.config.js",
@@ -26,14 +27,34 @@
   "keywords": [
     "krx",
     "korea-exchange",
+    "kospi",
+    "kosdaq",
+    "korean-stock-market",
     "stock",
     "finance",
+    "market-data",
     "cli",
+    "mcp",
+    "mcp-server",
     "agent",
-    "ai"
+    "ai",
+    "etf",
+    "bond",
+    "derivative",
+    "한국거래소",
+    "주식",
+    "시세"
   ],
-  "author": "",
+  "author": "Daniel Jung",
   "license": "MIT",
+  "homepage": "https://github.com/kyo504/krx-cli#readme",
+  "bugs": {
+    "url": "https://github.com/kyo504/krx-cli/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/kyo504"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kyo504/krx-cli.git"
@@ -97,6 +118,8 @@
     "plugins": {
       "@release-it/conventional-changelog": {
         "preset": "conventionalcommits",
+        "infile": "CHANGELOG.md",
+        "header": "# Changelog",
         "writerOpts": {
           "types": [
             {

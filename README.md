@@ -1,8 +1,12 @@
 # krx-cli
 
-AI 에이전트를 위한 KRX(한국거래소) Open API CLI 도구입니다.
+[![npm version](https://img.shields.io/npm/v/krx-cli.svg)](https://www.npmjs.com/package/krx-cli)
+[![npm downloads](https://img.shields.io/npm/dm/krx-cli.svg)](https://www.npmjs.com/package/krx-cli)
+[![license](https://img.shields.io/npm/l/krx-cli.svg)](https://github.com/kyo504/krx-cli/blob/main/LICENSE)
 
-Claude Code, GPT, Cursor 등의 AI 에이전트가 Bash tool을 통해 한국 주식시장 데이터를 조회할 수 있습니다.
+AI 에이전트를 위한 KRX(한국거래소) Open API CLI & MCP 서버입니다.
+
+Claude Code, GPT, Cursor 등의 AI 에이전트가 Bash tool 또는 MCP를 통해 한국 주식시장 데이터(KOSPI, KOSDAQ, ETF, 채권, 파생상품)를 조회할 수 있습니다.
 
 ## 특징
 
