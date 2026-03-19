@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.8.0](https://github.com/kyo504/krx-cli/compare/v1.7.3...v1.8.0) (2026-03-19)
+
+### Features
+
+- --verbose 옵션 구현으로 디버깅 로그 지원 ([181f4fc](https://github.com/kyo504/krx-cli/commit/181f4fcfb23902727b2f1420a3654e0c34bc3fe8))
+
 ## [1.7.3](https://github.com/kyo504/krx-cli/compare/v1.7.2...v1.7.3) (2026-03-19)
 
 ### Bug Fixes
