@@ -1,7 +1,11 @@
 import { Command } from "commander";
-import { validateDate, validateMarket } from "../../validator/index.js";
+import { validateMarket } from "../../validator/index.js";
 import { validateNoInjection } from "../../validator/index.js";
-import { executeCommand, resolveEndpoint } from "../command-helper.js";
+import {
+  executeCommand,
+  resolveEndpoint,
+  resolveDate,
+} from "../command-helper.js";
 import { getApiKey } from "../../client/auth.js";
 import { searchStock } from "../../client/search.js";
 import {
@@ -30,10 +34,10 @@ export function registerStockCommand(program: Command): void {
   stock
     .command("list")
     .description("List stock daily trading data")
-    .requiredOption("--date <date>", "trading date (YYYYMMDD)")
+    .option("--date <date>", "trading date (YYYYMMDD)")
     .option("--market <market>", "market: kospi, kosdaq, konex", "kospi")
-    .action(async (opts: { date: string; market: string }) => {
-      const date = validateDate(opts.date);
+    .action(async (opts: { date?: string; market: string }) => {
+      const date = resolveDate(opts.date, program);
       validateMarket(opts.market);
       const endpoint = resolveEndpoint(
         TRADING_ENDPOINTS,

@@ -1,6 +1,9 @@
 import { Command } from "commander";
-import { validateDate } from "../../validator/index.js";
-import { executeCommand, resolveEndpoint } from "../command-helper.js";
+import {
+  executeCommand,
+  resolveEndpoint,
+  resolveDate,
+} from "../command-helper.js";
 
 const MARKET_ENDPOINTS: Record<string, string> = {
   kospi: "/svc/apis/idx/kospi_dd_trd",
@@ -16,14 +19,14 @@ export function registerIndexCommand(program: Command): void {
   index
     .command("list")
     .description("List index daily trading data")
-    .requiredOption("--date <date>", "trading date (YYYYMMDD)")
+    .option("--date <date>", "trading date (YYYYMMDD)")
     .option(
       "--market <market>",
       "market: kospi, kosdaq, krx, bond, derivative",
       "kospi",
     )
-    .action(async (opts: { date: string; market: string }) => {
-      const date = validateDate(opts.date);
+    .action(async (opts: { date?: string; market: string }) => {
+      const date = resolveDate(opts.date, program);
       const endpoint = resolveEndpoint(MARKET_ENDPOINTS, opts.market, "market");
 
       await executeCommand({

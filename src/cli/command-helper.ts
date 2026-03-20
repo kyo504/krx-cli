@@ -16,6 +16,26 @@ import { applyPipeline } from "../utils/data-pipeline.js";
 import { matchesIsuCode } from "../utils/isin.js";
 import { validateDate } from "../validator/index.js";
 import { setVerbose, verbose } from "../utils/logger.js";
+import { getRecentTradingDate } from "../utils/date.js";
+
+export function resolveDate(
+  dateOpt: string | undefined,
+  program: Command,
+): string {
+  const fromDate = program.opts().from as string | undefined;
+  const toDate = program.opts().to as string | undefined;
+
+  if (dateOpt) {
+    return validateDate(dateOpt);
+  }
+
+  if (fromDate && toDate) {
+    return getRecentTradingDate();
+  }
+
+  writeError("Either --date or --from/--to is required");
+  process.exit(EXIT_CODES.USAGE_ERROR);
+}
 
 interface ExecuteCommandOptions {
   readonly endpoint: string;
