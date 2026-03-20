@@ -181,7 +181,7 @@ export function registerWatchlistCommand(program: Command): void {
       }
 
       const parentOpts = program.opts();
-      const isuCds = new Set(entries.map((e) => e.isuCd));
+      const isuCds = new Set(entries.flatMap((e) => [e.isuCd, e.isuSrtCd]));
       const errors: string[] = [];
 
       const [kospiResult, kosdaqResult] = await Promise.all([
