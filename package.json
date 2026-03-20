@@ -1,6 +1,6 @@
 {
   "name": "krx-cli",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "CLI & MCP server for KRX (Korea Exchange) Open API — query Korean stock market data (KOSPI, KOSDAQ, ETF, bonds, derivatives) from terminal or AI agents",
   "type": "module",
   "bin": {

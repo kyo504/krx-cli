@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/kyo504/krx-cli/compare/v1.8.0...v1.8.1) (2026-03-20)
+
+### Bug Fixes
+
+- --from/--to 사용 시 --date 필수 요구 제거 ([a97d21b](https://github.com/kyo504/krx-cli/commit/a97d21b71e0d2c17fb2df0897cc5f377eeb189ef))
+- watchlist show에서 종목 매칭 실패하는 버그 수정 ([25f2f1b](https://github.com/kyo504/krx-cli/commit/25f2f1b1ba34741ebd2cb7b19bd03daa290dc409))
+
 ## [1.8.0](https://github.com/kyo504/krx-cli/compare/v1.7.3...v1.8.0) (2026-03-19)
 
 ### Features
